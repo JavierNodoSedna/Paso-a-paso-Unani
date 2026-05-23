@@ -384,7 +384,7 @@
       <div class="prop-unit">g de sal por litro de líquido</div>
     </div>
 
-    <input type="range" id="calc-slider" min="1" max="15" step="0.5" value="4.0" oninput="calcUpdate()">
+    <input type="range" id="calc-slider" min="1" max="15" step="0.25" value="4.0" oninput="calcUpdate()">
     <div class="prop-markers">
       <span>1</span><span>3</span><span>5</span><span>7</span><span>9</span><span>12</span><span>15</span>
     </div>
@@ -392,7 +392,7 @@
     <div class="input-row" style="margin-bottom:16px">
       <div class="input-group">
         <label class="input-label">Editar manualmente (g/L)</label>
-        <input class="field" type="number" id="calc-manual" min="1" max="15" step="0.5" placeholder="4.0" oninput="calcManual()">
+        <input class="field" type="number" id="calc-manual" min="1" max="15" step="0.25" placeholder="4.0" oninput="calcManual()">
       </div>
       <div class="input-group">
         <label class="input-label">Semanas de subida</label>
@@ -401,12 +401,12 @@
     </div>
 
     <div class="semana-row">
-      <button class="semana-btn" onclick="cambiarProp(-0.5)">−</button>
+      <button class="semana-btn" onclick="cambiarProp(-0.25)">−</button>
       <div class="semana-badge">
         <strong id="calc-next-val">4.5</strong>
         <span>objetivo en <span id="calc-semanas-lbl">1</span> sem.</span>
       </div>
-      <button class="semana-btn" onclick="cambiarProp(0.5)">+</button>
+      <button class="semana-btn" onclick="cambiarProp(0.25)">+</button>
     </div>
   </div>
 
@@ -542,11 +542,11 @@ function calcUpdate() {
   const semanas = parseInt(document.getElementById('calc-semanas').value) || 1;
   saveCalcProp(prop);
 
-  document.getElementById('calc-prop-val').textContent = prop.toFixed(1);
-  document.getElementById('calc-manual').value = prop.toFixed(1);
+  document.getElementById('calc-prop-val').textContent = prop.toFixed(2);
+  document.getElementById('calc-manual').value = prop.toFixed(2);
 
   const next = Math.min(prop + 0.5 * semanas, 15);
-  document.getElementById('calc-next-val').textContent = next.toFixed(1);
+  document.getElementById('calc-next-val').textContent = next.toFixed(2);
   document.getElementById('calc-semanas-lbl').textContent = semanas;
 
   renderCalcResults(prop, next);
@@ -561,7 +561,7 @@ function calcManual() {
 }
 
 function cambiarProp(delta) {
-  let v = Math.round((parseFloat(document.getElementById('calc-slider').value) + delta) * 2) / 2;
+  let v = Math.round((parseFloat(document.getElementById('calc-slider').value) + delta) * 4) / 4;
   v = Math.max(1, Math.min(15, v));
   document.getElementById('calc-slider').value = v;
   calcUpdate();
@@ -760,14 +760,14 @@ window.addEventListener('DOMContentLoaded', () => {
   // Init
   const prop = getCalcProp();
   document.getElementById('calc-slider').value = prop;
-  document.getElementById('calc-manual').value  = prop.toFixed(1);
-  document.getElementById('calc-prop-val').textContent = prop.toFixed(1);
+  document.getElementById('calc-manual').value  = prop.toFixed(2);
+  document.getElementById('calc-prop-val').textContent = prop.toFixed(2);
 
   initSuero();
   renderBebidasLista();
 
   const next = Math.min(prop + 0.5, 15);
-  document.getElementById('calc-next-val').textContent = next.toFixed(1);
+  document.getElementById('calc-next-val').textContent = next.toFixed(2);
   renderCalcResults(prop, next);
 });
 </script>
