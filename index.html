@@ -391,7 +391,7 @@
 
     <div class="input-row" style="margin-bottom:16px">
       <div class="input-group">
-        <label class="input-label">Editar manualmente (g/L)</label>
+        <label class="input-label">Editar (g/L)</label>
         <input class="field" type="number" id="calc-manual" min="1" max="15" step="0.25" placeholder="4.0" oninput="calcManual()">
       </div>
       <div class="input-group">
@@ -412,7 +412,7 @@
 
   <!-- TIP -->
   <div class="tip">
-    <strong>Protocolo Huarte:</strong> sube <strong>0.5 g/L por semana</strong> como máximo. El objetivo fisiológico es <strong>6.6 g/L</strong> (equivalente al suero intravenoso isotónico).
+    <strong>Protocolo Duarte:</strong> sube <strong>0.5 g/L por semana</strong> como máximo. El objetivo fisiológico es <strong>6.6 g/L</strong> (equivalente al suero intravenoso isotónico).
   </div>
 
   <!-- RESULTADOS POR BEBIDA -->
@@ -650,8 +650,9 @@ function renderCalcResults(prop, nextProp) {
       </div>
       <div class="brc-salt">
         <div class="brc-g">${salAhora.toFixed(2)} g</div>
-        <div class="brc-lbl">SAL AHORA</div>
-        ${salNext !== null ? `<div class="brc-next">→ ${salNext.toFixed(2)} g prox.</div>` : ''}
+        <div class="brc-lbl">CON SUERO</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:3px">directo: <span style="color:var(--orange)">${((b.ml/1000)*prop).toFixed(2)} g</span></div>
+        ${salNext !== null ? `<div class="brc-next">sem. sig: ${salNext.toFixed(2)} g</div>` : ''}
       </div>
     </div>`;
   }).join('');
