@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#1a1208">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Calculadora · Proporción Sal</title>
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<meta name="mobile-web-app-capable" content="yes">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Fraunces:ital,wght@0,300;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #1a1208;
+    --bg2:     #211608;
+    --bg3:     #2a1d0a;
+    --surface: #332408;
+    --surface2:#3d2c0a;
+    --border:  rgba(240,170,80,0.12);
+    --border2: rgba(240,170,80,0.28);
+
+    --orange:      #f5a742;
+    --orange-dim:  #c07820;
+    --orange-pale: rgba(245,167,66,0.08);
+    --orange-glow: rgba(245,167,66,0.18);
+
+    --amber:   #f5c842;
+    --red:     #e06060;
+    --red-dim: rgba(224,96,96,0.12);
+    --green:   #72c97a;
+
+    --text:  #f0dfc0;
+    --text2: #c09060;
+    --text3: #7a5830;
+
+    --mono:   'DM Mono', monospace;
+    --serif:  'Fraunces', Georgia, serif;
+    --radius: 14px;
+    --radius-sm: 9px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  html, body {
+    min-height: 100%;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  #app {
+    max-width: 480px;
+    margin: 0 auto;
+    padding: 24px 18px max(40px, env(safe-area-inset-bottom));
+  }
+
+  /* ── HEADER ── */
+  .app-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    margin-bottom: 22px;
+  }
+  .logo-word {
+    font-family: var(--serif);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 28px;
+    color: var(--orange);
+    line-height: 1;
+    letter-spacing: -0.5px;
+  }
+  .logo-sub {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-top: 3px;
+  }
+  .header-date {
+    font-size: 11px;
+    color: var(--text3);
+    text-align: right;
+  }
+  .header-date strong { display: block; font-size: 13px; color: var(--text2); }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+  .card-title {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 14px;
+  }
+
+  /* ── PROPORCIÓN DISPLAY ── */
+  .prop-display { text-align: center; padding: 10px 0 18px; }
+  .prop-big {
+    font-size: 72px;
+    font-weight: 500;
+    color: var(--orange);
+    line-height: 1;
+    letter-spacing: -3px;
+  }
+  .prop-unit { font-size: 13px; color: var(--text3); margin-top: 6px; }
+
+  /* SLIDER */
+  input[type=range] {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 4px;
+    border-radius: 2px;
+    background: linear-gradient(90deg, var(--orange-dim) 0%, var(--orange) 100%);
+    outline: none;
+    margin-bottom: 6px;
+  }
+  input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 22px; height: 22px;
+    border-radius: 50%;
+    background: var(--orange);
+    box-shadow: 0 0 8px var(--orange-glow);
+    cursor: pointer;
+  }
+  .prop-markers {
+    display: flex;
+    justify-content: space-between;
+    font-size: 9px;
+    color: var(--text3);
+    margin-bottom: 14px;
+    letter-spacing: 0.5px;
+  }
+
+  /* SEMANA CONTROL */
+  .semana-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 18px;
+    margin-top: 6px;
+  }
+  .semana-btn {
+    width: 38px; height: 38px;
+    border-radius: 50%;
+    border: 0.5px solid var(--border2);
+    background: var(--surface2);
+    color: var(--text);
+    font-size: 22px;
+    font-family: var(--mono);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s;
+    line-height: 1;
+  }
+  .semana-btn:hover { background: var(--orange-pale); }
+  .semana-badge { text-align: center; }
+  .semana-badge strong { display: block; font-size: 18px; color: var(--amber); }
+  .semana-badge span { font-size: 10px; color: var(--text3); }
+
+  /* ── INPUTS ── */
+  .input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 12px;
+  }
+  .input-group { display: flex; flex-direction: column; gap: 5px; }
+  .input-label {
+    font-size: 10px;
+    color: var(--text3);
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+  }
+  .field {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 16px;
+    padding: 10px 12px;
+    width: 100%;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+  }
+  .field:focus { border-color: var(--orange); }
+  .field::placeholder { color: var(--text3); font-size: 13px; }
+  .field[readonly] { opacity: 0.6; cursor: default; }
+
+  /* ── SUERO CARD ── */
+  .suero-card {
+    background: var(--surface);
+    border: 1px solid rgba(106,180,245,0.2);
+    border-radius: var(--radius);
+    padding: 18px;
+    margin-bottom: 12px;
+  }
+  .suero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: #8ac8f5;
+    margin-bottom: 12px;
+  }
+  .suero-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: #8ac8f5;
+  }
+  .suero-formula {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    margin: 12px 0;
+    font-size: 12px;
+    color: var(--text2);
+    line-height: 1.9;
+  }
+  .suero-formula .hl  { color: #8ac8f5; font-weight: 500; }
+  .suero-formula .hlg { color: var(--green); font-weight: 500; }
+  .suero-note { font-size: 10px; color: var(--text3); line-height: 1.7; }
+
+  /* ── RESULTADOS BEBIDAS ── */
+  .brc {
+    background: var(--bg3);
+    border: 0.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 13px 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    transition: border-color 0.12s;
+  }
+  .brc:hover { border-color: var(--border2); }
+  .brc.with-suero { border-left: 2px solid rgba(106,180,245,0.4); }
+  .brc-icon { font-size: 22px; flex-shrink: 0; }
+  .brc-info { flex: 1; }
+  .brc-name { font-size: 13px; color: var(--text); }
+  .brc-vol  { font-size: 11px; color: var(--text3); margin-top: 1px; }
+  .brc-suero-note { font-size: 10px; color: #8ac8f5; margin-top: 1px; }
+  .brc-salt { text-align: right; }
+  .brc-g    { font-size: 22px; font-weight: 500; color: var(--orange); line-height: 1; }
+  .brc-lbl  { font-size: 9px; color: var(--text3); letter-spacing: 1px; }
+  .brc-next { font-size: 11px; color: var(--amber); margin-top: 2px; }
+
+  /* ── LISTA BEBIDAS ── */
+  .beb-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 9px 0;
+    border-bottom: 0.5px solid var(--border);
+  }
+  .beb-item:last-child { border-bottom: none; }
+  .beb-emoji { font-size: 20px; flex-shrink: 0; }
+  .beb-info { flex: 1; }
+  .beb-name { font-size: 13px; color: var(--text); }
+  .beb-ml   { font-size: 11px; color: var(--text3); }
+
+  .del-btn {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 0.5px solid rgba(224,96,96,0.25);
+    background: transparent;
+    color: var(--red);
+    cursor: pointer;
+    font-size: 16px;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.12s;
+  }
+  .del-btn:hover { background: var(--red-dim); }
+
+  .beb-form {
+    display: grid;
+    grid-template-columns: 2fr 1fr 44px 44px;
+    gap: 8px;
+    align-items: end;
+    margin-top: 12px;
+  }
+
+  /* ── BOTONES ── */
+  .btn {
+    width: 100%;
+    padding: 13px;
+    border-radius: var(--radius-sm);
+    border: none;
+    font-family: var(--mono);
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: opacity 0.15s, transform 0.1s;
+    letter-spacing: 0.3px;
+  }
+  .btn:active { transform: scale(0.98); }
+  .btn-primary { background: var(--orange); color: var(--bg); }
+  .btn-primary:hover { opacity: 0.9; }
+  .btn-add {
+    width: 44px; height: 40px;
+    border-radius: var(--radius-sm);
+    border: none;
+    background: var(--orange);
+    color: var(--bg);
+    font-size: 20px;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: opacity 0.12s;
+  }
+  .btn-add:hover { opacity: 0.85; }
+
+  /* ── INVERSO ── */
+  .inv-result {
+    text-align: center;
+    padding: 14px 0 6px;
+    font-size: 13px;
+    color: var(--text3);
+    min-height: 40px;
+  }
+
+  /* ── TIP ── */
+  .tip {
+    background: var(--orange-pale);
+    border: 0.5px solid rgba(245,167,66,0.2);
+    border-radius: var(--radius-sm);
+    padding: 12px 14px;
+    font-size: 11px;
+    color: var(--text2);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+  .tip strong { color: var(--orange); }
+
+  /* ── DIVIDER ── */
+  .divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+
+  /* ── EMPTY ── */
+  .empty { text-align: center; padding: 20px 0; color: var(--text3); font-size: 12px; line-height: 1.8; }
+
+  /* ── FASE LABEL ── */
+  .fase-pill {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 10px;
+    letter-spacing: 0.5px;
+  }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div>
+      <div class="logo-word">Calculadora</div>
+      <div class="logo-sub">proporción sal · método Unani</div>
+    </div>
+    <div class="header-date">
+      <strong id="hoy-fecha">—</strong>
+      <span id="hoy-dia"></span>
+    </div>
+  </div>
+
+  <!-- PROPORCIÓN ACTUAL -->
+  <div class="card">
+    <div class="card-title">Proporción actual</div>
+    <div class="prop-display">
+      <div class="prop-big" id="calc-prop-val">4.0</div>
+      <div class="prop-unit">g de sal por litro de líquido</div>
+    </div>
+
+    <input type="range" id="calc-slider" min="1" max="15" step="0.5" value="4.0" oninput="calcUpdate()">
+    <div class="prop-markers">
+      <span>1</span><span>3</span><span>5</span><span>7</span><span>9</span><span>12</span><span>15</span>
+    </div>
+
+    <div class="input-row" style="margin-bottom:16px">
+      <div class="input-group">
+        <label class="input-label">Editar manualmente (g/L)</label>
+        <input class="field" type="number" id="calc-manual" min="1" max="15" step="0.5" placeholder="4.0" oninput="calcManual()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Semanas de subida</label>
+        <input class="field" type="number" id="calc-semanas" min="1" max="30" step="1" value="1" oninput="calcUpdate()">
+      </div>
+    </div>
+
+    <div class="semana-row">
+      <button class="semana-btn" onclick="cambiarProp(-0.5)">−</button>
+      <div class="semana-badge">
+        <strong id="calc-next-val">4.5</strong>
+        <span>objetivo en <span id="calc-semanas-lbl">1</span> sem.</span>
+      </div>
+      <button class="semana-btn" onclick="cambiarProp(0.5)">+</button>
+    </div>
+  </div>
+
+  <!-- TIP -->
+  <div class="tip">
+    <strong>Protocolo Huarte:</strong> sube <strong>0.5 g/L por semana</strong> como máximo. El objetivo fisiológico es <strong>6.6 g/L</strong> (equivalente al suero intravenoso isotónico).
+  </div>
+
+  <!-- RESULTADOS POR BEBIDA -->
+  <div class="card">
+    <div class="card-title">Sal por bebida — proporción actual</div>
+    <div id="calc-results">
+      <div class="empty">Añade tus bebidas habituales abajo ↓</div>
+    </div>
+  </div>
+
+  <!-- MIS BEBIDAS -->
+  <div class="card">
+    <div class="card-title">Mis bebidas habituales</div>
+    <div id="bebidas-lista"></div>
+
+    <div class="divider"></div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:8px;letter-spacing:1px">AÑADIR NUEVA BEBIDA</div>
+
+    <div class="beb-form">
+      <div class="input-group">
+        <label class="input-label">Nombre</label>
+        <input class="field" type="text" id="beb-nombre" placeholder="Café, tercio...">
+      </div>
+      <div class="input-group">
+        <label class="input-label">ml</label>
+        <input class="field" type="number" id="beb-ml" placeholder="250" min="1" max="2000">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Icon</label>
+        <input class="field" type="text" id="beb-emoji" placeholder="☕" maxlength="2"
+          style="font-size:20px;text-align:center;padding:8px 4px">
+      </div>
+      <button class="btn-add" onclick="addBebida()">+</button>
+    </div>
+
+    <div style="font-size:10px;color:var(--text3);margin-top:8px;line-height:1.7">
+      Sugerencias: Café ☕ 80ml · Café largo ☕ 150ml · Tercio 🍺 330ml · Agua 💧 250ml · Vaso grande 💧 400ml
+    </div>
+  </div>
+
+  <!-- SUERO -->
+  <div class="suero-card">
+    <div class="suero-badge">
+      <div class="suero-dot"></div>
+      SUERO — CONCENTRACIÓN ACTIVA
+    </div>
+
+    <div class="input-row" style="align-items:stretch;margin-bottom:0">
+      <div class="input-group" style="display:flex;flex-direction:column">
+        <label class="input-label">Concentración del suero (g/L)</label>
+        <input class="field" type="number" id="suero-conc" min="1" max="200" step="1" placeholder="50"
+          oninput="sueroUpdate()" style="font-size:22px;color:#8ac8f5;flex:1">
+      </div>
+      <div class="input-group" style="display:flex;flex-direction:column">
+        <label class="input-label">ml agua por g de sal</label>
+        <input class="field" type="number" id="suero-mlperg" readonly
+          style="color:var(--text3);font-size:20px;flex:1">
+      </div>
+    </div>
+
+    <div class="suero-formula" id="suero-formula">
+      Introduce la concentración de tu suero para ver el cálculo.
+    </div>
+
+    <div class="suero-note">
+      Ejemplo: suero a <span style="color:#8ac8f5">50 g/L</span> → cada gramo de sal arrastra <span style="color:#8ac8f5">20 ml</span> de agua.<br>
+      La calculadora suma esos ml al volumen real de la bebida.
+    </div>
+  </div>
+
+  <!-- CÁLCULO INVERSO -->
+  <div class="card">
+    <div class="card-title">Cálculo inverso</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6">
+      Tengo preparado un líquido con X gramos de sal — ¿a qué proporción corresponde?
+    </div>
+    <div class="input-row">
+      <div class="input-group">
+        <label class="input-label">Gramos de sal</label>
+        <input class="field" type="number" id="inv-sal" placeholder="2.0" step="0.1" min="0" oninput="calcInverso()">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Volumen bebida (ml)</label>
+        <input class="field" type="number" id="inv-ml" placeholder="330" min="1" oninput="calcInverso()">
+      </div>
+    </div>
+    <div class="inv-result" id="inv-result">Introduce valores para calcular</div>
+  </div>
+
+</div><!-- /app -->
+
+<script>
+// ── UTILS ──
+function loadLS(key, def) {
+  try { const v = localStorage.getItem(key); return v !== null ? JSON.parse(v) : def; }
+  catch(e) { return def; }
+}
+function saveLS(key, val) { localStorage.setItem(key, JSON.stringify(val)); }
+
+const BEBIDAS_DEFAULT = [
+  { nombre: 'Agua (vaso)',    ml: 250, emoji: '💧' },
+  { nombre: 'Café',          ml: 80,  emoji: '☕' },
+  { nombre: 'Café largo',    ml: 150, emoji: '☕' },
+  { nombre: 'Tercio cerveza',ml: 330, emoji: '🍺' },
+  { nombre: 'Agua (grande)', ml: 400, emoji: '💧' },
+];
+
+function getBebidas() {
+  return loadLS('bebidas_perfil', BEBIDAS_DEFAULT);
+}
+function saveBebidas(b) { saveLS('bebidas_perfil', b); }
+function getCalcProp()  { return parseFloat(localStorage.getItem('calc_proporcion') || '4.0'); }
+function saveCalcProp(v){ localStorage.setItem('calc_proporcion', String(v)); }
+function getSueroConc() { return parseFloat(localStorage.getItem('suero_conc') || '50'); }
+function mlPorGramo(conc) { return conc > 0 ? 1000 / conc : 0; }
+
+function faseInfo(p) {
+  if (p < 3) return { txt: 'Planta baja',   col: 'var(--red)' };
+  if (p < 5) return { txt: 'Escalones',      col: 'var(--amber)' };
+  if (p < 7) return { txt: 'Meseta',         col: 'var(--green)' };
+  return       { txt: 'Mantenimiento ✓', col: 'var(--green)' };
+}
+
+// ── PROPORCIÓN ──
+function calcUpdate() {
+  const prop    = parseFloat(document.getElementById('calc-slider').value);
+  const semanas = parseInt(document.getElementById('calc-semanas').value) || 1;
+  saveCalcProp(prop);
+
+  document.getElementById('calc-prop-val').textContent = prop.toFixed(1);
+  document.getElementById('calc-manual').value = prop.toFixed(1);
+
+  const next = Math.min(prop + 0.5 * semanas, 15);
+  document.getElementById('calc-next-val').textContent = next.toFixed(1);
+  document.getElementById('calc-semanas-lbl').textContent = semanas;
+
+  renderCalcResults(prop, next);
+}
+
+function calcManual() {
+  const v = parseFloat(document.getElementById('calc-manual').value);
+  if (isNaN(v) || v < 1 || v > 15) return;
+  document.getElementById('calc-slider').value = v;
+  saveCalcProp(v);
+  calcUpdate();
+}
+
+function cambiarProp(delta) {
+  let v = Math.round((parseFloat(document.getElementById('calc-slider').value) + delta) * 2) / 2;
+  v = Math.max(1, Math.min(15, v));
+  document.getElementById('calc-slider').value = v;
+  calcUpdate();
+}
+
+// ── SUERO ──
+function sueroUpdate() {
+  const conc = parseFloat(document.getElementById('suero-conc').value);
+  if (!conc || conc <= 0) return;
+  localStorage.setItem('suero_conc', String(conc));
+  const mlG = mlPorGramo(conc);
+  document.getElementById('suero-mlperg').value = mlG.toFixed(1);
+
+  const ej_sal = 2.5, ej_ml = 330;
+  const mlSueroEj  = ej_sal * mlG;
+  const volTotEj   = ej_ml + mlSueroEj;
+  const propRealEj = ej_sal / (volTotEj / 1000);
+  const propBrutaEj= ej_sal / (ej_ml / 1000);
+
+  document.getElementById('suero-formula').innerHTML = `
+    Suero a <span class="hl">${conc} g/L</span>
+    → por cada <span class="hl">1 g de sal</span>
+    entran <span class="hl">${mlG.toFixed(1)} ml</span> de agua del suero.<br>
+    Ejemplo: tercio (${ej_ml} ml) + <span class="hl">${ej_sal} g sal</span>
+    = ${ej_ml} + ${mlSueroEj.toFixed(0)} ml suero
+    = <span class="hlg">${volTotEj.toFixed(0)} ml totales</span>
+    → prop. real <span class="hlg">${propRealEj.toFixed(2)} g/L</span>
+    <span style="color:var(--text3);font-size:10px">(sin suero: ${propBrutaEj.toFixed(2)} g/L)</span>
+  `;
+  calcUpdate();
+}
+
+function initSuero() {
+  const conc = getSueroConc();
+  document.getElementById('suero-conc').value = conc;
+  document.getElementById('suero-mlperg').value = mlPorGramo(conc).toFixed(1);
+  sueroUpdate();
+}
+
+// ── RESULTADOS POR BEBIDA ──
+function salParaBebida(mlBebida, g_per_L, mlG, usaSuero) {
+  if (usaSuero) {
+    const denom = 1000 - g_per_L * mlG;
+    if (denom <= 0) return null;
+    return (g_per_L * mlBebida) / denom;
+  }
+  return (mlBebida / 1000) * g_per_L;
+}
+
+function renderCalcResults(prop, nextProp) {
+  const bebidas  = getBebidas();
+  const el       = document.getElementById('calc-results');
+  if (!bebidas.length) {
+    el.innerHTML = '<div class="empty">Añade tus bebidas habituales abajo ↓</div>';
+    return;
+  }
+
+  const conc     = getSueroConc();
+  const mlG      = mlPorGramo(conc);
+  const usaSuero = conc > 0;
+
+  el.innerHTML = bebidas.map(b => {
+    const salAhora = salParaBebida(b.ml, prop, mlG, usaSuero);
+    const salNext  = nextProp !== prop ? salParaBebida(b.ml, nextProp, mlG, usaSuero) : null;
+
+    if (salAhora === null) {
+      return `<div class="brc">
+        <div class="brc-icon">${b.emoji}</div>
+        <div class="brc-info">
+          <div class="brc-name">${b.nombre}</div>
+          <div class="brc-vol" style="color:var(--red)">Imposible con suero ${conc} g/L</div>
+        </div>
+      </div>`;
+    }
+
+    const volReal  = usaSuero ? b.ml + salAhora * mlG : b.ml;
+    const mlSuero  = usaSuero ? salAhora * mlG : 0;
+    const fase     = faseInfo(prop);
+
+    return `<div class="brc ${usaSuero ? 'with-suero' : ''}">
+      <div class="brc-icon">${b.emoji}</div>
+      <div class="brc-info">
+        <div class="brc-name">${b.nombre}</div>
+        <div class="brc-vol">${b.ml} ml · <span style="color:${fase.col}">${fase.txt}</span></div>
+        ${usaSuero ? `<div class="brc-suero-note">+${mlSuero.toFixed(0)} ml suero → ${volReal.toFixed(0)} ml tot.</div>` : ''}
+      </div>
+      <div class="brc-salt">
+        <div class="brc-g">${salAhora.toFixed(2)} g</div>
+        <div class="brc-lbl">SAL AHORA</div>
+        ${salNext !== null ? `<div class="brc-next">→ ${salNext.toFixed(2)} g prox.</div>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── BEBIDAS PERFIL ──
+function renderBebidasLista() {
+  const bebidas = getBebidas();
+  const el = document.getElementById('bebidas-lista');
+  if (!bebidas.length) {
+    el.innerHTML = '<div class="empty" style="padding:10px 0">Sin bebidas guardadas.</div>';
+    return;
+  }
+  el.innerHTML = bebidas.map((b, i) => `
+    <div class="beb-item">
+      <span class="beb-emoji">${b.emoji}</span>
+      <div class="beb-info">
+        <div class="beb-name">${b.nombre}</div>
+        <div class="beb-ml">${b.ml} ml</div>
+      </div>
+      <button class="del-btn" onclick="deleteBebida(${i})">×</button>
+    </div>
+  `).join('');
+}
+
+function addBebida() {
+  const nombre = document.getElementById('beb-nombre').value.trim();
+  const ml     = parseFloat(document.getElementById('beb-ml').value);
+  const emoji  = document.getElementById('beb-emoji').value.trim() || '🥤';
+  if (!nombre)        { alert('Introduce un nombre'); return; }
+  if (!ml || ml <= 0) { alert('Introduce el volumen en ml'); return; }
+  const bebidas = getBebidas();
+  bebidas.push({ nombre, ml, emoji });
+  saveBebidas(bebidas);
+  document.getElementById('beb-nombre').value = '';
+  document.getElementById('beb-ml').value = '';
+  document.getElementById('beb-emoji').value = '';
+  renderBebidasLista();
+  refreshResults();
+}
+
+function deleteBebida(i) {
+  const bebidas = getBebidas();
+  bebidas.splice(i, 1);
+  saveBebidas(bebidas);
+  renderBebidasLista();
+  refreshResults();
+}
+
+function refreshResults() {
+  const prop    = getCalcProp();
+  const semanas = parseInt(document.getElementById('calc-semanas').value) || 1;
+  const next    = Math.min(prop + 0.5 * semanas, 15);
+  renderCalcResults(prop, next);
+}
+
+// ── CÁLCULO INVERSO ──
+function calcInverso() {
+  const sal = parseFloat(document.getElementById('inv-sal').value);
+  const ml  = parseFloat(document.getElementById('inv-ml').value);
+  const el  = document.getElementById('inv-result');
+
+  if (!sal || !ml || ml <= 0) {
+    el.innerHTML = '<span style="color:var(--text3)">Introduce valores para calcular</span>';
+    return;
+  }
+
+  const conc     = getSueroConc();
+  const mlG      = mlPorGramo(conc);
+  const volReal  = ml + sal * mlG;
+  const propReal = sal / (volReal / 1000);
+  const propBruta= sal / (ml / 1000);
+  const fi       = faseInfo(propReal);
+  const fib      = faseInfo(propBruta);
+
+  el.innerHTML = `
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
+      <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:13px;text-align:center">
+        <div style="font-size:11px;color:#8ac8f5;letter-spacing:1px;margin-bottom:6px">CON SUERO</div>
+        <div style="font-size:34px;font-weight:500;color:${fi.col};line-height:1">${propReal.toFixed(2)}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">g/L real</div>
+        <div style="font-size:10px;color:#8ac8f5;margin-top:2px">+${(sal*mlG).toFixed(0)} ml suero · ${volReal.toFixed(0)} ml tot.</div>
+      </div>
+      <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:13px;text-align:center;opacity:0.55">
+        <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:6px">SIN SUERO</div>
+        <div style="font-size:34px;font-weight:500;color:${fib.col};line-height:1">${propBruta.toFixed(2)}</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:4px">g/L aparente</div>
+        <div style="font-size:10px;color:var(--text3);margin-top:2px">solo ${ml} ml</div>
+      </div>
+    </div>
+    <div style="font-size:11px;color:${fi.col}">${fi.txt}</div>
+    <div style="font-size:10px;color:var(--text3);margin-top:3px">${sal}g sal · suero ${conc} g/L</div>
+  `;
+}
+
+// ── BOOT ──
+window.addEventListener('DOMContentLoaded', () => {
+  // Fecha
+  const now   = new Date();
+  const dias  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  document.getElementById('hoy-fecha').textContent =
+    `${now.getDate()} ${meses[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('hoy-dia').textContent = dias[now.getDay()];
+
+  // Init
+  const prop = getCalcProp();
+  document.getElementById('calc-slider').value = prop;
+  document.getElementById('calc-manual').value  = prop.toFixed(1);
+  document.getElementById('calc-prop-val').textContent = prop.toFixed(1);
+
+  initSuero();
+  renderBebidasLista();
+
+  const next = Math.min(prop + 0.5, 15);
+  document.getElementById('calc-next-val').textContent = next.toFixed(1);
+  renderCalcResults(prop, next);
+});
+</script>
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/Paso-a-paso-Unani/sw.js')
+      .then(r => console.log('SW OK:', r.scope))
+      .catch(e => console.log('SW error:', e));
+  });
+}
+</script>
+</body>
+</html>
