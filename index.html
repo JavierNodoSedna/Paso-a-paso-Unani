@@ -412,7 +412,7 @@
 
   <!-- TIP -->
   <div class="tip">
-    <strong>Protocolo Duarte:</strong> sube <strong>0.5 g/L por semana</strong> como máximo. El objetivo fisiológico es <strong>6.6 g/L</strong> (equivalente al suero intravenoso isotónico).
+    <strong>Protocolo Duarte:</strong> sube <strong>0.5 g/L por semana</strong> como máximo.<br>Escala: &lt;3 Planta baja · 3–5 Escalones · 5–7 Meseta · 7–9 Avance · 9–15 Detox activo · 12 Mantenimiento.
   </div>
 
   <!-- RESULTADOS POR BEBIDA -->
@@ -530,10 +530,13 @@ function getSueroConc() { return parseFloat(localStorage.getItem('suero_conc') |
 function mlPorGramo(conc) { return conc > 0 ? 1000 / conc : 0; }
 
 function faseInfo(p) {
-  if (p < 3) return { txt: 'Planta baja',   col: 'var(--red)' };
-  if (p < 5) return { txt: 'Escalones',      col: 'var(--amber)' };
-  if (p < 7) return { txt: 'Meseta',         col: 'var(--green)' };
-  return       { txt: 'Mantenimiento ✓', col: 'var(--green)' };
+  if (p < 3)   return { txt: 'Planta baja',    col: 'var(--red)',    desc: 'Enfermedad activa' };
+  if (p < 5)   return { txt: 'Escalones',       col: 'var(--amber)', desc: 'Subida gradual' };
+  if (p < 7)   return { txt: 'Meseta',          col: 'var(--orange)',desc: 'Estabilización inicial' };
+  if (p < 9)   return { txt: 'Avance',          col: '#f5d742',      desc: 'Seguir subiendo' };
+  if (p < 15)  return { txt: 'Detox activo',    col: '#c8a0f5',      desc: 'Hasta resolver síntomas' };
+  if (p === 12) return { txt: 'Mantenimiento ✓',col: 'var(--green)', desc: 'Sostener aquí' };
+  return               { txt: 'Rango ideal ✓',  col: 'var(--green)', desc: '7–15 g/L de nacimiento' };
 }
 
 // ── PROPORCIÓN ──
