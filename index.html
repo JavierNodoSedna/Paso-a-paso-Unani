@@ -672,7 +672,7 @@ function renderCalcResults(prop, nextProp) {
       <div class="brc-salt">
         <div class="brc-g">${salAhora.toFixed(2)} g</div>
         <div class="brc-lbl">CON SUERO</div>
-        ${usaSuero ? `<div class="brc-directo">directo: ${salDirecta} g</div>` : ''}
+        <div class="brc-directo">directo:<br><span style="font-size:18px">${salDirecta} g</span></div>
       </div>
     </div>`;
   }).join('');
