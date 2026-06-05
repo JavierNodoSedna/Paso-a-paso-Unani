@@ -121,7 +121,7 @@
     width: 100%;
     height: 4px;
     border-radius: 2px;
-    background: linear-gradient(90deg, var(--orange-dim) 0%, var(--orange) 100%);
+    background: linear-gradient(90deg, var(--orange) 0%, var(--orange-dim) 100%);
     outline: none;
     margin-bottom: 6px;
   }
@@ -136,10 +136,11 @@
   .prop-markers {
     display: flex;
     justify-content: space-between;
-    font-size: 9px;
+    font-size: 8px;
     color: var(--text3);
     margin-bottom: 14px;
-    letter-spacing: 0.5px;
+    letter-spacing: 0;
+    padding: 0 2px;
   }
 
   /* SEMANA CONTROL */
@@ -147,22 +148,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 18px;
-    margin-top: 6px;
+    gap: 40px;
+    margin-top: 16px;
   }
   .semana-btn {
-    width: 38px; height: 38px;
+    width: 64px; height: 64px;
     border-radius: 50%;
     border: 0.5px solid var(--border2);
     background: var(--surface2);
-    color: var(--text);
-    font-size: 22px;
+    color: var(--orange);
+    font-size: 32px;
     font-family: var(--mono);
     cursor: pointer;
     display: flex; align-items: center; justify-content: center;
-    transition: background 0.12s;
+    transition: background 0.12s, transform 0.1s;
     line-height: 1;
   }
+  .semana-btn:active { transform: scale(0.93); }
   .semana-btn:hover { background: var(--orange-pale); }
   .semana-badge { text-align: center; }
   .semana-badge strong { display: block; font-size: 18px; color: var(--amber); }
@@ -253,11 +255,18 @@
   .brc-info { flex: 1; }
   .brc-name { font-size: 13px; color: var(--text); }
   .brc-vol  { font-size: 11px; color: var(--text3); margin-top: 1px; }
-  .brc-suero-note { font-size: 10px; color: #8ac8f5; margin-top: 1px; }
+  .brc-suero-note { font-size: 15px; font-weight: 500; color: #8ac8f5; margin-top: 5px; letter-spacing: 0.2px; }
   .brc-salt { text-align: right; }
   .brc-g    { font-size: 22px; font-weight: 500; color: var(--orange); line-height: 1; }
   .brc-lbl  { font-size: 9px; color: var(--text3); letter-spacing: 1px; }
   .brc-next { font-size: 11px; color: var(--amber); margin-top: 2px; }
+  .brc-directo {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--amber);
+    margin-top: 5px;
+    letter-spacing: 0.3px;
+  }
 
   /* ── LISTA BEBIDAS ── */
   .beb-item {
@@ -384,28 +393,28 @@
       <div class="prop-unit">g de sal por litro de líquido</div>
     </div>
 
-    <input type="range" id="calc-slider" min="1" max="15" step="0.25" value="4.0" oninput="calcUpdate()">
-    <div class="prop-markers">
-      <span>1</span><span>3</span><span>5</span><span>7</span><span>9</span><span>12</span><span>15</span>
+    <div style="position:relative;margin-bottom:6px">
+      <div id="slider-track-fill" style="
+        position:absolute;
+        height:4px;
+        background:var(--orange);
+        border-radius:2px;
+        top:50%;
+        transform:translateY(-50%);
+        left:0;
+        pointer-events:none;
+        z-index:1;
+      "></div>
+      <input type="range" id="calc-slider" min="0" max="15" step="0.25" value="4.0"
+        oninput="calcUpdate()"
+        style="-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;outline:none;margin:0;cursor:pointer;background:var(--surface2)">
     </div>
+    <div class="prop-markers"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span></div>
 
-    <div class="input-row" style="margin-bottom:16px">
-      <div class="input-group">
-        <label class="input-label">Editar (g/L)</label>
-        <input class="field" type="number" id="calc-manual" min="1" max="15" step="0.25" placeholder="4.0" oninput="calcManual()">
-      </div>
-      <div class="input-group">
-        <label class="input-label">Semanas de subida</label>
-        <input class="field" type="number" id="calc-semanas" min="1" max="30" step="1" value="1" oninput="calcUpdate()">
-      </div>
-    </div>
+
 
     <div class="semana-row">
       <button class="semana-btn" onclick="cambiarProp(-0.25)">−</button>
-      <div class="semana-badge">
-        <strong id="calc-next-val">4.5</strong>
-        <span>objetivo en <span id="calc-semanas-lbl">1</span> sem.</span>
-      </div>
       <button class="semana-btn" onclick="cambiarProp(0.25)">+</button>
     </div>
   </div>
@@ -477,10 +486,7 @@
       Introduce la concentración de tu suero para ver el cálculo.
     </div>
 
-    <div class="suero-note">
-      Ejemplo: suero a <span style="color:#8ac8f5">50 g/L</span> → cada gramo de sal arrastra <span style="color:#8ac8f5">20 ml</span> de agua.<br>
-      La calculadora suma esos ml al volumen real de la bebida.
-    </div>
+
   </div>
 
   <!-- CÁLCULO INVERSO -->
@@ -540,32 +546,35 @@ function faseInfo(p) {
 }
 
 // ── PROPORCIÓN ──
+function updateSliderTrack(slider) {
+  const val = parseFloat(slider.value);
+  const pct = (val / 15) * 100;
+  // Usar CSS directamente en el input — más fiable que el div en Safari
+  slider.style.background =
+    `linear-gradient(90deg, var(--orange) ${pct}%, var(--surface2) ${pct}%)`;
+  // Ocultar el div externo — no lo necesitamos
+  const fill = document.getElementById('slider-track-fill');
+  if (fill) fill.style.display = 'none';
+}
+
 function calcUpdate() {
-  const prop    = parseFloat(document.getElementById('calc-slider').value);
-  const semanas = parseInt(document.getElementById('calc-semanas').value) || 1;
+  const slider  = document.getElementById('calc-slider');
+  const prop    = parseFloat(slider.value);
+  const semanas = parseInt(document.getElementById('calc-semanas')?.value) || 1;
   saveCalcProp(prop);
+  updateSliderTrack(slider);
 
   document.getElementById('calc-prop-val').textContent = prop.toFixed(2);
-  document.getElementById('calc-manual').value = prop.toFixed(2);
 
-  const next = Math.min(prop + 0.5 * semanas, 15);
-  document.getElementById('calc-next-val').textContent = next.toFixed(2);
-  document.getElementById('calc-semanas-lbl').textContent = semanas;
-
+  const next = Math.min(prop + 0.5, 15);
   renderCalcResults(prop, next);
+  sueroUpdate(); // refrescar ejemplo con nueva proporción
 }
 
-function calcManual() {
-  const v = parseFloat(document.getElementById('calc-manual').value);
-  if (isNaN(v) || v < 1 || v > 15) return;
-  document.getElementById('calc-slider').value = v;
-  saveCalcProp(v);
-  calcUpdate();
-}
 
 function cambiarProp(delta) {
   let v = Math.round((parseFloat(document.getElementById('calc-slider').value) + delta) * 4) / 4;
-  v = Math.max(1, Math.min(15, v));
+  v = Math.max(0, Math.min(15, v));
   document.getElementById('calc-slider').value = v;
   calcUpdate();
 }
@@ -578,23 +587,31 @@ function sueroUpdate() {
   const mlG = mlPorGramo(conc);
   document.getElementById('suero-mlperg').value = mlG.toFixed(1);
 
-  const ej_sal = 2.5, ej_ml = 330;
-  const mlSueroEj  = ej_sal * mlG;
-  const volTotEj   = ej_ml + mlSueroEj;
-  const propRealEj = ej_sal / (volTotEj / 1000);
-  const propBrutaEj= ej_sal / (ej_ml / 1000);
+  // Usar proporción actual y primera bebida para el ejemplo dinámico
+  const propActual = getCalcProp();
+  const bebidas    = getBebidas();
+  const bej        = bebidas.length > 0 ? bebidas[0] : { nombre: 'tercio', ml: 330 };
+  const denom      = 1000 - propActual * mlG;
+  const salEj      = denom > 0 ? (propActual * bej.ml) / denom : null;
+  const mlSueroEj  = salEj !== null ? salEj * mlG : 0;
+  const volTotEj   = bej.ml + mlSueroEj;
+  const propBrutaEj= salEj !== null ? salEj / (bej.ml / 1000) : 0;
 
-  document.getElementById('suero-formula').innerHTML = `
+  document.getElementById('suero-formula').innerHTML = salEj === null ? `
+    Suero a <span class="hl">${conc} g/L</span>
+    → por cada <span class="hl">1 g de sal</span>
+    entran <span class="hl">${mlG.toFixed(1)} ml</span> de agua del suero.
+  ` : `
     Suero a <span class="hl">${conc} g/L</span>
     → por cada <span class="hl">1 g de sal</span>
     entran <span class="hl">${mlG.toFixed(1)} ml</span> de agua del suero.<br>
-    Ejemplo: tercio (${ej_ml} ml) + <span class="hl">${ej_sal} g sal</span>
-    = ${ej_ml} + ${mlSueroEj.toFixed(0)} ml suero
+    Ejemplo: ${bej.nombre} (${bej.ml} ml) a <span class="hl">${propActual.toFixed(2)} g/L</span>
+    → <span class="hl">${salEj.toFixed(2)} g sal</span>
+    + ${mlSueroEj.toFixed(0)} ml suero
     = <span class="hlg">${volTotEj.toFixed(0)} ml totales</span>
-    → prop. real <span class="hlg">${propRealEj.toFixed(2)} g/L</span>
-    <span style="color:var(--text3);font-size:10px">(sin suero: ${propBrutaEj.toFixed(2)} g/L)</span>
+    <span style="color:var(--text3);font-size:10px">(directo sin suero: ${propBrutaEj.toFixed(2)} g/L)</span>
   `;
-  calcUpdate();
+  // No llamar calcUpdate aquí (lo llama quien nos invoca)
 }
 
 function initSuero() {
@@ -644,18 +661,18 @@ function renderCalcResults(prop, nextProp) {
     const mlSuero  = usaSuero ? salAhora * mlG : 0;
     const fase     = faseInfo(prop);
 
+    const salDirecta = ((b.ml / 1000) * prop).toFixed(2);
     return `<div class="brc ${usaSuero ? 'with-suero' : ''}">
       <div class="brc-icon">${b.emoji}</div>
       <div class="brc-info">
         <div class="brc-name">${b.nombre}</div>
         <div class="brc-vol">${b.ml} ml · <span style="color:${fase.col}">${fase.txt}</span></div>
-        ${usaSuero ? `<div class="brc-suero-note">+${mlSuero.toFixed(0)} ml suero → ${volReal.toFixed(0)} ml tot.</div>` : ''}
+        ${usaSuero ? `<div class="brc-suero-note">+${mlSuero.toFixed(0)} ml suero<br>(${volReal.toFixed(0)} ml tot.)</div>` : ''}
       </div>
       <div class="brc-salt">
         <div class="brc-g">${salAhora.toFixed(2)} g</div>
         <div class="brc-lbl">CON SUERO</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:3px">directo: <span style="color:var(--orange)">${((b.ml/1000)*prop).toFixed(2)} g</span></div>
-        ${salNext !== null ? `<div class="brc-next">sem. sig: ${salNext.toFixed(2)} g</div>` : ''}
+        ${usaSuero ? `<div class="brc-directo">directo: ${salDirecta} g</div>` : ''}
       </div>
     </div>`;
   }).join('');
@@ -707,7 +724,7 @@ function deleteBebida(i) {
 
 function refreshResults() {
   const prop    = getCalcProp();
-  const semanas = parseInt(document.getElementById('calc-semanas').value) || 1;
+  const semanas = parseInt(document.getElementById('calc-semanas')?.value) || 1;
   const next    = Math.min(prop + 0.5 * semanas, 15);
   renderCalcResults(prop, next);
 }
@@ -761,18 +778,26 @@ window.addEventListener('DOMContentLoaded', () => {
     `${now.getDate()} ${meses[now.getMonth()]} ${now.getFullYear()}`;
   document.getElementById('hoy-dia').textContent = dias[now.getDay()];
 
-  // Init
-  const prop = getCalcProp();
-  document.getElementById('calc-slider').value = prop;
-  document.getElementById('calc-manual').value  = prop.toFixed(2);
-  document.getElementById('calc-prop-val').textContent = prop.toFixed(2);
-
-  initSuero();
+  // ── BOOT: orden fijo ──
+  // paso 1: bebidas (para que sueroUpdate las use)
   renderBebidasLista();
 
-  const next = Math.min(prop + 0.5, 15);
-  document.getElementById('calc-next-val').textContent = next.toFixed(2);
-  renderCalcResults(prop, next);
+  // paso 2: cargar prop guardada y actualizar TODO de golpe
+  const propInicial = getCalcProp();
+  const sliderEl = document.getElementById('calc-slider');
+  sliderEl.value = propInicial;           // valor real al slider
+  document.getElementById('calc-prop-val').textContent = propInicial.toFixed(2);
+  // Esperar al primer paint para que getBoundingClientRect tenga dimensiones reales
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => updateSliderTrack(sliderEl));
+  });
+
+  // paso 3: suero — getCalcProp() ya devuelve el valor correcto
+  initSuero();
+
+  // paso 4: resultados por bebida
+  const nextInicial = Math.min(propInicial + 0.5, 15);
+  renderCalcResults(propInicial, nextInicial);
 });
 </script>
 <script>
