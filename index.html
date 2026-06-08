@@ -611,7 +611,10 @@ function sueroUpdate() {
     = <span class="hlg">${volTotEj.toFixed(0)} ml totales</span>
     <span style="color:var(--text3);font-size:10px">(directo sin suero: ${propBrutaEj.toFixed(2)} g/L)</span>
   `;
-  // No llamar calcUpdate aquí (lo llama quien nos invoca)
+  // Actualizar tarjetas de bebida con la nueva concentración de suero
+  const p = getCalcProp();
+  const n = Math.min(p + 0.5, 15);
+  renderCalcResults(p, n);
 }
 
 function initSuero() {
