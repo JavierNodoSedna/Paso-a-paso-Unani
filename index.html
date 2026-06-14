@@ -257,9 +257,33 @@
   .brc-vol  { font-size: 11px; color: var(--text3); margin-top: 1px; }
   .brc-suero-note { font-size: 15px; font-weight: 500; color: #1a7ab8; margin-top: 5px; letter-spacing: 0.2px; }
   .brc-salt { text-align: right; }
+  .brc-rows { text-align: left; }
   .brc-g    { font-size: 22px; font-weight: 500; color: var(--orange); line-height: 1; }
   .brc-lbl  { font-size: 9px; color: var(--text3); letter-spacing: 1px; }
   .brc-next { font-size: 11px; color: var(--amber); margin-top: 2px; }
+  .brc-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 140px;
+  }
+  .brc-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .brc-row-lbl {
+    font-size: 11px;
+    letter-spacing: 0.2px;
+    white-space: nowrap;
+  }
+  .brc-row-val {
+    font-size: 16px;
+    font-weight: 500;
+    text-align: right;
+    white-space: nowrap;
+  }
   .brc-directo {
     font-size: 14px;
     font-weight: 500;
@@ -670,12 +694,21 @@ function renderCalcResults(prop, nextProp) {
       <div class="brc-info">
         <div class="brc-name">${b.nombre}</div>
         <div class="brc-vol">${b.ml} ml · <span style="color:${fase.col}">${fase.txt}</span></div>
-        ${usaSuero ? `<div class="brc-suero-note">+${mlSuero.toFixed(0)} ml suero<br>(${volReal.toFixed(0)} ml tot.)</div>` : ''}
+
       </div>
-      <div class="brc-salt">
-        <div class="brc-directo">directo:<br><span style="font-size:18px">${salDirecta} g</span></div>
-        <div class="brc-g" style="margin-top:6px">${salAhora.toFixed(2)} g</div>
-        <div class="brc-lbl">CON SUERO</div>
+      <div class="brc-rows">
+        <div class="brc-row">
+          <span class="brc-row-lbl" style="color:var(--text3)">Directo</span>
+          <span class="brc-row-val" style="color:var(--orange)">${salDirecta} g</span>
+        </div>
+        <div class="brc-row">
+          <span class="brc-row-lbl" style="color:#1a7ab8">Con suero extra</span>
+          <span class="brc-row-val" style="color:#1a7ab8">${(salAhora * 1000 / getSueroConc()).toFixed(0)} ml</span>
+        </div>
+        <div class="brc-row">
+          <span class="brc-row-lbl" style="color:#2e7d32">Con suero dentro</span>
+          <span class="brc-row-val" style="color:#2e7d32">${Math.round((prop * b.ml / 1000) / (getSueroConc() / 1000))} ml</span>
+        </div>
       </div>
     </div>`;
   }).join('');
