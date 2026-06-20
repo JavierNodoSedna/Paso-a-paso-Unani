@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#fdf6ed">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Calculadora · Proporción Sal</title>
+<title>Unani · Sal &amp; Dieta</title>
 <link rel="manifest" href="manifest.json">
 <link rel="apple-touch-icon" href="icons/icon-192.png">
 <meta name="mobile-web-app-capable" content="yes">
@@ -39,6 +39,14 @@
     --serif:  'Fraunces', Georgia, serif;
     --radius: 14px;
     --radius-sm: 9px;
+
+    /* ── DIETA ── */
+    --dr: 14px;
+    --drsm: 9px;
+    --rojo:     #c0392b;
+    --rojo-bg:  rgba(192,57,43,0.08);
+    --verde:    #2e7d32;
+    --verde-bg: rgba(46,125,50,0.09);
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
@@ -55,7 +63,7 @@
   #app {
     max-width: 480px;
     margin: 0 auto;
-    padding: 24px 18px max(40px, env(safe-area-inset-bottom));
+    padding: 24px 18px max(80px, env(safe-area-inset-bottom));
   }
 
   /* ── HEADER ── */
@@ -392,9 +400,352 @@
     font-size: 10px;
     letter-spacing: 0.5px;
   }
+
+/* ═══ DIETA CSS ═══ */
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  min-height: 100%;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+#app {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 24px 18px max(80px, env(safe-area-inset-bottom));
+}
+
+/* ── HEADER ── */
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 20px;
+}
+.logo { font-family: var(--serif); font-style: italic; font-weight: 300; font-size: 26px; color: var(--verde); line-height: 1; }
+.logo-sub { font-size: 10px; color: var(--text3); letter-spacing: 2px; text-transform: uppercase; margin-top: 2px; }
+.header-date { font-size: 11px; color: var(--text3); text-align: right; }
+.header-date strong { display: block; font-size: 13px; color: var(--text2); }
+
+/* ── MARCADOR DIARIO ── */
+.marcador {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--dr);
+  padding: 20px;
+  margin-bottom: 12px;
+  text-align: center;
+}
+.marcador-score {
+  font-family: var(--serif);
+  font-weight: 600;
+  font-size: 80px;
+  line-height: 1;
+  transition: color 0.3s;
+}
+.marcador-label {
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-top: 6px;
+  color: var(--text3);
+}
+.marcador-nombre {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 18px;
+  margin-top: 4px;
+  transition: color 0.3s;
+}
+.marcador-desc {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 6px;
+  line-height: 1.5;
+  max-width: 280px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Barra de progreso */
+.barra-wrap {
+  height: 6px;
+  background: var(--bg3);
+  border-radius: 3px;
+  margin: 14px 0 0;
+  overflow: hidden;
+}
+.barra-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 0.4s ease, background 0.3s;
+}
+
+/* ── PESTAÑAS ── */
+.tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+.tab {
+  flex: 1;
+  padding: 9px 0;
+  border-radius: var(--drsm);
+  border: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--text3);
+  font-family: var(--mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.tab.active {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: #fff;
+}
+
+/* ── SECTION ── */
+.section { display: none; }
+.section.active { display: block; }
+.section-title {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 20px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+.section-desc { font-size: 11px; color: var(--text3); margin-bottom: 16px; line-height: 1.5; }
+
+/* ── CARD ── */
+.card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--dr);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.card-title {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+/* ── PARÁMETROS ── */
+.param-card {
+  background: var(--surface);
+  border: 0.5px solid var(--border);
+  border-radius: var(--dr);
+  padding: 16px;
+  margin-bottom: 10px;
+}
+.param-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 12px;
+  gap: 10px;
+}
+.param-num {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 1px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.param-nombre {
+  font-size: 13px;
+  color: var(--text);
+  font-weight: 500;
+  flex: 1;
+}
+.param-score-badge {
+  font-size: 22px;
+  font-weight: 500;
+  font-family: var(--serif);
+  flex-shrink: 0;
+  min-width: 40px;
+  text-align: right;
+}
+
+/* Opciones 0/10/20 */
+.opciones {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+.opcion {
+  border-radius: var(--drsm);
+  border: 0.5px solid var(--border);
+  background: var(--bg2);
+  padding: 10px 8px;
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: center;
+}
+.opcion:hover { border-color: var(--border2); }
+.opcion.sel-0 { background: var(--rojo-bg); border-color: rgba(192,57,43,0.35); }
+.opcion.sel-10 { background: var(--amber-bg); border-color: rgba(184,106,0,0.35); }
+.opcion.sel-20 { background: var(--verde-bg); border-color: rgba(46,125,50,0.35); }
+
+.opcion-pts {
+  font-size: 16px;
+  font-weight: 500;
+  font-family: var(--serif);
+  line-height: 1;
+  margin-bottom: 5px;
+}
+.opcion-pts.c0  { color: var(--rojo); }
+.opcion-pts.c10 { color: var(--amber); }
+.opcion-pts.c20 { color: var(--verde); }
+
+.opcion-label { font-size: 9px; color: var(--text3); letter-spacing: 0.5px; line-height: 1.4; }
+.opcion.sel-0  .opcion-label { color: var(--rojo); }
+.opcion.sel-10 .opcion-label { color: var(--amber); }
+.opcion.sel-20 .opcion-label { color: var(--verde); }
+
+/* ── ALIMENTOS ── */
+.alimento-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--drsm);
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.12s;
+}
+.alimento-card:hover { border-color: var(--border2); }
+.alimento-emoji { font-size: 24px; flex-shrink: 0; }
+.alimento-info { flex: 1; }
+.alimento-nombre { font-size: 13px; color: var(--text); font-weight: 500; }
+.alimento-desc { font-size: 10px; color: var(--text3); margin-top: 1px; line-height: 1.4; }
+.alimento-pts {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+/* ── BUSCADOR ── */
+.search-wrap { position: relative; margin-bottom: 12px; }
+.search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 14px; color: var(--text3); }
+.field-search {
+  width: 100%;
+  background: var(--bg2);
+  border: 0.5px solid var(--border);
+  border-radius: var(--drsm);
+  color: var(--text);
+  font-family: var(--mono);
+  font-size: 14px;
+  padding: 10px 12px 10px 36px;
+  outline: none;
+  transition: border-color 0.15s;
+}
+.field-search:focus { border-color: var(--verde); }
+.field-search::placeholder { color: var(--text3); }
+
+/* ── CATEGORÍA ── */
+.categoria-label {
+  font-size: 10px;
+  color: var(--text3);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin: 14px 0 8px;
+}
+
+/* ── DIVIDER ── */
+.divider { height: 0.5px; background: var(--border); margin: 14px 0; }
+
+/* ── EMPTY ── */
+.empty { text-align: center; padding: 24px 0; color: var(--text3); font-size: 12px; line-height: 1.8; }
+
+/* ── BTN ── */
+.btn {
+  width: 100%;
+  padding: 13px;
+  border-radius: var(--drsm);
+  border: none;
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--verde); color: #fff; }
+.btn-ghost { background: transparent; border: 0.5px solid var(--border); color: var(--text2); }
+.btn-ghost:hover { border-color: var(--border2); }
+
+/* ── RESULTADO ZONA ── */
+.zona-card {
+  border-radius: var(--dr);
+  padding: 16px;
+  margin-bottom: 10px;
+  border: 0.5px solid;
+}
+.zona-0  { background: var(--rojo-bg);  border-color: rgba(192,57,43,0.25); }
+.zona-40 { background: var(--amber-bg); border-color: rgba(184,106,0,0.25); }
+.zona-80 { background: var(--verde-bg); border-color: rgba(46,125,50,0.25); }
+
+.zona-pts { font-family: var(--serif); font-weight: 600; font-size: 13px; margin-bottom: 4px; }
+.zona-nombre { font-family: var(--serif); font-style: italic; font-size: 16px; margin-bottom: 8px; }
+.zona-texto { font-size: 11px; line-height: 1.7; color: var(--text2); }
+
+/* ── CHIP CATEGORÍA ── */
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.chip {
+  padding: 5px 12px;
+  border-radius: 20px;
+  border: 0.5px solid var(--border);
+  background: transparent;
+  color: var(--text3);
+  font-family: var(--mono);
+  font-size: 11px;
+  cursor: pointer;
+  transition: all 0.12s;
+}
+.chip:hover { border-color: var(--border2); color: var(--text2); }
+.chip.active { background: var(--verde); border-color: var(--verde); color: #fff; }
 </style>
 </head>
 <body>
+<!-- Nav principal -->
+<nav style="
+  position:fixed; bottom:0; left:50%; transform:translateX(-50%);
+  width:100%; max-width:480px;
+  background:#fdf6ed;
+  border-top:0.5px solid rgba(180,120,40,0.15);
+  display:flex;
+  z-index:200;
+  padding:6px 0 max(6px, env(safe-area-inset-bottom));
+" id="main-nav">
+  <button id="main-nav-calc" onclick="switchMain('calc')" style="
+    flex:1; background:none; border:none; cursor:pointer;
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:500;
+    padding:8px 0; display:flex; flex-direction:column;
+    align-items:center; gap:3px; color:#d4820a;
+  "><span style="font-size:20px">⚗️</span>Calculadora</button>
+  <button id="main-nav-dieta" onclick="switchMain('dieta')" style="
+    flex:1; background:none; border:none; cursor:pointer;
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:400;
+    padding:8px 0; display:flex; flex-direction:column;
+    align-items:center; gap:3px; color:#a07040;
+  "><span style="font-size:20px">🥩</span>Dieta</button>
+</nav>
+
+<div id="section-calc" style="display:block">
 <div id="app">
 
   <!-- HEADER -->
@@ -533,6 +884,227 @@
   </div>
 
 </div><!-- /app -->
+</div><!-- /section-calc -->
+
+<!-- ═══ SECCIÓN DIETA ═══ -->
+<div id="section-dieta" style="display:none">
+<div id="app-dieta">
+
+
+  <!-- HEADER -->
+  <div class="app-header">
+    <div>
+      <div class="logo">Dieta</div>
+      <div class="logo-sub">Eficiencia · Método Unani</div>
+    </div>
+    <div class="header-date">
+      <strong id="hoy-fecha">—</strong>
+      <span id="hoy-dia"></span>
+    </div>
+  </div>
+
+  <!-- MARCADOR -->
+  <div class="marcador">
+    <div class="marcador-score" id="score-num">—</div>
+    <div class="marcador-label">puntos hoy</div>
+    <div class="marcador-nombre" id="score-nombre">Completa los 5 parámetros</div>
+    <div class="marcador-desc" id="score-desc">Evalúa cada parámetro para ver tu puntuación.</div>
+    <div class="barra-wrap">
+      <div class="barra-fill" id="barra-fill" style="width:0%"></div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('parametros')" id="tab-parametros">Parámetros</button>
+    <button class="tab" onclick="switchTab('alimentos')" id="tab-alimentos">Alimentos</button>
+    <button class="tab" onclick="switchTab('resultado')" id="tab-resultado">Resultado</button>
+  </div>
+
+  <!-- ═══ PARÁMETROS ═══ -->
+  <div class="section active" id="sec-parametros">
+    <div class="section-title">5 Parámetros</div>
+    <div class="section-desc">Cada parámetro puntúa 0, 10 o 20. Máximo 100 puntos.</div>
+
+    <!-- P1: CMM -->
+    <div class="param-card" id="pc-1">
+      <div class="param-header">
+        <span class="param-num">01</span>
+        <span class="param-nombre">Dinámica del CMM<br><small style="font-weight:400;color:var(--text3)">Ventana Nutricional</small></span>
+        <span class="param-score-badge" id="pscore-1" style="color:var(--text3)">—</span>
+      </div>
+      <div class="opciones">
+        <div class="opcion" onclick="setParam(1, 0, this)">
+          <div class="opcion-pts c0">0</div>
+          <div class="opcion-label">CMM apagado<br>5+ ingestas/día<br>Ventana &gt;8h</div>
+        </div>
+        <div class="opcion" onclick="setParam(1, 10, this)">
+          <div class="opcion-pts c10">10</div>
+          <div class="opcion-label">3 comidas<br>sin colaciones<br>Ventana 4–8h</div>
+        </div>
+        <div class="opcion" onclick="setParam(1, 20, this)">
+          <div class="opcion-pts c20">20</div>
+          <div class="opcion-label">1–2 ingestas<br>Ayuno &gt;16h<br>Ventana &lt;4h</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P2: ROI / Volumen -->
+    <div class="param-card" id="pc-2">
+      <div class="param-header">
+        <span class="param-num">02</span>
+        <span class="param-nombre">ROI y Volumen Sólido<br><small style="font-weight:400;color:var(--text3)">Rendimiento vs cantidad</small></span>
+        <span class="param-score-badge" id="pscore-2" style="color:var(--text3)">—</span>
+      </div>
+      <div class="opciones">
+        <div class="opcion" onclick="setParam(2, 0, this)">
+          <div class="opcion-pts c0">0</div>
+          <div class="opcion-label">Más de 1.5 kg<br>sólidos/día<br>ROI negativo</div>
+        </div>
+        <div class="opcion" onclick="setParam(2, 10, this)">
+          <div class="opcion-pts c10">10</div>
+          <div class="opcion-label">600 g – 1 kg<br>sólidos/día<br>ROI neutro</div>
+        </div>
+        <div class="opcion" onclick="setParam(2, 20, this)">
+          <div class="opcion-pts c20">20</div>
+          <div class="opcion-label">Menos de 600 g<br>sólidos/día<br>ROI máximo</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P3: Cetosis / Densidad -->
+    <div class="param-card" id="pc-3">
+      <div class="param-header">
+        <span class="param-num">03</span>
+        <span class="param-nombre">Cetosis · Densidad<br><small style="font-weight:400;color:var(--text3)">Biodisponibilidad</small></span>
+        <span class="param-score-badge" id="pscore-3" style="color:var(--text3)">—</span>
+      </div>
+      <div class="opciones">
+        <div class="opcion" onclick="setParam(3, 0, this)">
+          <div class="opcion-pts c0">0</div>
+          <div class="opcion-label">Sin grasa animal<br>Baja absorción<br>No cetosis</div>
+        </div>
+        <div class="opcion" onclick="setParam(3, 10, this)">
+          <div class="opcion-pts c10">10</div>
+          <div class="opcion-label">Carnes magras<br>Densidad media<br>No cetosis</div>
+        </div>
+        <div class="opcion" onclick="setParam(3, 20, this)">
+          <div class="opcion-pts c20">20</div>
+          <div class="opcion-label">Alta grasa animal<br>100% asimilación<br>En cetosis</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P4: Fibra -->
+    <div class="param-card" id="pc-4">
+      <div class="param-header">
+        <span class="param-num">04</span>
+        <span class="param-nombre">Fibra<br><small style="font-weight:400;color:var(--text3)">Desgaste Mecánico</small></span>
+        <span class="param-score-badge" id="pscore-4" style="color:var(--text3)">—</span>
+      </div>
+      <div class="opciones">
+        <div class="opcion" onclick="setParam(4, 0, this)">
+          <div class="opcion-pts c0">0</div>
+          <div class="opcion-label">Más de 30 g<br>fibra/día<br>Desgaste extremo</div>
+        </div>
+        <div class="opcion" onclick="setParam(4, 10, this)">
+          <div class="opcion-pts c10">10</div>
+          <div class="opcion-label">15 – 30 g<br>fibra/día<br>Desgaste moderado</div>
+        </div>
+        <div class="opcion" onclick="setParam(4, 20, this)">
+          <div class="opcion-pts c20">20</div>
+          <div class="opcion-label">Menos de 5 g<br>por evento<br>Desgaste cero</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- P5: Bichos / Bilis -->
+    <div class="param-card" id="pc-5">
+      <div class="param-header">
+        <span class="param-num">05</span>
+        <span class="param-nombre">Bichos · Bilis · pH<br><small style="font-weight:400;color:var(--text3)">Microbiota intestinal</small></span>
+        <span class="param-score-badge" id="pscore-5" style="color:var(--text3)">—</span>
+      </div>
+      <div class="opciones">
+        <div class="opcion" onclick="setParam(5, 0, this)">
+          <div class="opcion-pts c0">0</div>
+          <div class="opcion-label">Sin grasa<br>Sin bilis<br>Riesgo SIBO</div>
+        </div>
+        <div class="opcion" onclick="setParam(5, 10, this)">
+          <div class="opcion-pts c10">10</div>
+          <div class="opcion-label">Bilis pobre<br>pH parcial<br>Sin SIBO claro</div>
+        </div>
+        <div class="opcion" onclick="setParam(5, 20, this)">
+          <div class="opcion-pts c20">20</div>
+          <div class="opcion-label">Bilis esterilizante<br>Vinagre + Roquefort<br>pH alcalino</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn btn-ghost" onclick="resetParams()" style="margin-top:4px">Reiniciar parámetros</button>
+  </div>
+
+  <!-- ═══ ALIMENTOS ═══ -->
+  <div class="section" id="sec-alimentos">
+    <div class="section-title">Alimentos</div>
+    <div class="section-desc">Puntuación Unani según densidad nutricional y eficiencia digestiva.</div>
+
+    <!-- Buscador -->
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input class="field-search" type="text" id="alimento-search" placeholder="Buscar alimento..." oninput="filtrarAlimentos()">
+    </div>
+
+    <!-- Chips categoría -->
+    <div class="chips" id="cat-chips">
+      <button class="chip active" data-cat="todos" onclick="setCat(this)">Todos</button>
+      <button class="chip" data-cat="animal" onclick="setCat(this)">Animal</button>
+      <button class="chip" data-cat="vegetal" onclick="setCat(this)">Vegetal</button>
+      <button class="chip" data-cat="lacteo" onclick="setCat(this)">Lácteo</button>
+      <button class="chip" data-cat="patron" onclick="setCat(this)">Patrones</button>
+    </div>
+
+    <div id="alimentos-lista"></div>
+  </div>
+
+  <!-- ═══ RESULTADO ═══ -->
+  <div class="section" id="sec-resultado">
+    <div class="section-title">Tu diagnóstico</div>
+    <div class="section-desc">Basado en los 5 parámetros del sistema David Duarte.</div>
+
+    <!-- Zonas -->
+    <div class="zona-card zona-80">
+      <div class="zona-pts" style="color:var(--verde)">80 – 100 puntos</div>
+      <div class="zona-nombre" style="color:var(--verde)">Máquina de Alta Densidad</div>
+      <div class="zona-texto">Eficiencia Evolutiva. Tu sistema digestivo opera como fue diseñado. Gastas muy poca energía en digerir, tu bilis esteriliza tu intestino delgado previniendo el SIBO, y tus ventanas de ayuno mantienen tu Complejo Motor Migratorio impecable. Eres una máquina de construir tejido humano.</div>
+    </div>
+
+    <div class="zona-card zona-40">
+      <div class="zona-pts" style="color:var(--amber)">40 – 70 puntos</div>
+      <div class="zona-nombre" style="color:var(--amber)">Sobreviviente Inflamado</div>
+      <div class="zona-texto">Desgaste Crónico. Tienes un metabolismo en conflicto. Le das a tu cuerpo algunos ladrillos estructurales, pero saboteas su asimilación inundándolo de fibra, bloqueando tu bilis al quitarle la grasa a la carne, y apagando tu CMM al comer varias veces al día. Estado ideal para generar enfermedades por Causa Verde.</div>
+    </div>
+
+    <div class="zona-card zona-0">
+      <div class="zona-pts" style="color:var(--rojo)">0 – 30 puntos</div>
+      <div class="zona-nombre" style="color:var(--rojo)">Rumiante Colapsado</div>
+      <div class="zona-texto">Inanición Estructural. Alarma roja metabólica. Tu sistema invierte casi toda su energía vital intentando mover y fermentar volúmenes masivos de fibra que no puede asimilar. Tu falta de grasa animal ha apagado tu vesícula biliar, convirtiendo tu intestino delgado en una zona de sobrecrecimiento bacteriano (SIBO). Estás envejeciendo aceleradamente por falta de materia prima.</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Resultado actual -->
+    <div class="card" id="resultado-card">
+      <div class="card-title">Tu puntuación actual</div>
+      <div id="resultado-detalle" style="font-size:12px;color:var(--text3);line-height:1.8">
+        Completa los 5 parámetros en la pestaña anterior para ver tu diagnóstico.
+      </div>
+    </div>
+  </div>
+
+
+</div><!-- /app-dieta -->
+</div><!-- /section-dieta -->
 
 <script>
 // ── UTILS ──
@@ -836,6 +1408,254 @@ window.addEventListener('DOMContentLoaded', () => {
   renderCalcResults(propInicial, nextInicial);
 });
 </script>
+<script>
+// ═══ DIETA JS ═══
+
+// ── DATA ──
+const ALIMENTOS = [
+  // ANIMAL
+  { nombre: 'Carne de res orgánica (libre pastoreo)', cat: 'animal', emoji: '🥩', pts: 99, desc: 'Perfección estructural. 9 aminoácidos esenciales, grasas esenciales, vitaminas B, hierro hemo, zinc. Cero antinutrientes.' },
+  { nombre: 'Huevo entero', cat: 'animal', emoji: '🥚', pts: 95, desc: 'Estándar de oro de la proteína. Altísima densidad esencial, colina en la yema, proteína perfecta.' },
+  { nombre: 'Carne de cerdo con grasa', cat: 'animal', emoji: '🥓', pts: 90, desc: 'Alta densidad. Grasa animal completa, aminoácidos esenciales. Volumen bajo, costo digestivo mínimo.' },
+  { nombre: 'Sardina / pescado graso', cat: 'animal', emoji: '🐟', pts: 88, desc: 'Alta densidad. Omega-3, proteína completa, minerales. Volumen muy bajo.' },
+  { nombre: 'Hígado de res', cat: 'animal', emoji: '🫀', pts: 97, desc: 'Superalimento. Mayor densidad de vitaminas liposolubles. Retinol activo, B12, hierro hemo en concentración máxima.' },
+  { nombre: 'Pollo con piel y grasa', cat: 'animal', emoji: '🍗', pts: 78, desc: 'Buena densidad con grasa. Sin piel pierde puntos por reducir la grasa esencial.' },
+  { nombre: 'Mantequilla', cat: 'animal', emoji: '🧈', pts: 85, desc: 'Grasa animal pura. Vitaminas liposolubles, ácido butírico. Estimula la bilis. Sin volumen de fibra.' },
+  // LÁCTEO
+  { nombre: 'Queso curado / Roquefort', cat: 'lacteo', emoji: '🧀', pts: 75, desc: 'Fermentado. Penicilium activo en Roquefort. Estimula bilis, microbiota positiva. Alimento medicina Clase 9.' },
+  { nombre: 'Queso fresco', cat: 'lacteo', emoji: '🧀', pts: 55, desc: 'Densidad media. Sin fermentación activa. Proteína moderada.' },
+  { nombre: 'Yogur natural entero', cat: 'lacteo', emoji: '🥛', pts: 45, desc: 'Fermentado pero con lactosa residual. Estimulo biliar moderado.' },
+  { nombre: 'Leche entera', cat: 'lacteo', emoji: '🥛', pts: 30, desc: 'Azúcar láctea (lactosa). Volumen alto para los nutrientes que aporta. Interferencia digestiva moderada.' },
+  // VEGETAL
+  { nombre: 'Vinagre sin pasteurizar', cat: 'vegetal', emoji: '🍶', pts: 80, desc: 'Alimento medicina Clase 9. Ácido acético, pH ácido, estimula bilis y esteriliza intestino. No es un alimento de volumen.' },
+  { nombre: 'Aguacate', cat: 'vegetal', emoji: '🥑', pts: 40, desc: 'Grasa vegetal. No tiene grasa animal completa pero sí volumen bajo y grasas monoinsaturadas.' },
+  { nombre: 'Chocolate amargo (>85%)', cat: 'vegetal', emoji: '🍫', pts: 38, desc: 'Magnesio, polifenoles. David lo recomienda especialmente. Cuidar la cantidad de fibra y azúcar.' },
+  { nombre: 'Manzana (100g)', cat: 'vegetal', emoji: '🍎', pts: 15, desc: 'Energía opcional. No aporta bloques de construcción. Es agua y fructosa. Energía a corto plazo, no nutre a nivel estructural.' },
+  { nombre: 'Plátano', cat: 'vegetal', emoji: '🍌', pts: 12, desc: 'Fructosa y almidón. Sin proteína ni grasa. Alto volumen de azúcar sin retorno estructural.' },
+  { nombre: 'Lechuga (100g)', cat: 'vegetal', emoji: '🥬', pts: 2, desc: 'Agua crujiente. Aporte esencial casi inexistente. Obliga al cuerpo a procesar fibra sin aminoácidos ni grasas esenciales.' },
+  { nombre: 'Brócoli', cat: 'vegetal', emoji: '🥦', pts: 8, desc: 'Alto en fibra y antinutrientes (goitrógenos). Costo digestivo elevado en relación al aporte estructural.' },
+  { nombre: 'Arroz blanco cocido', cat: 'vegetal', emoji: '🍚', pts: 18, desc: 'Carbohidrato limpio, poca fibra. Sin antinutrientes relevantes. Energía rápida sin gran costo digestivo.' },
+  { nombre: 'Legumbres cocidas', cat: 'vegetal', emoji: '🫘', pts: 10, desc: 'Proteína incompleta, alto en lectinas y fitatos. Volumen masivo para aporte proteico moderado.' },
+  // PATRONES
+  { nombre: 'Día vegano estándar', cat: 'patron', emoji: '🌱', pts: 40, desc: 'Exceso de trabajo, déficit de materiales. Reprueba en densidad esencial. Antinutrientes bloquean minerales clave. Carece de B12 hemo y retinol activo.' },
+  { nombre: 'Día carnívoro (carne + huevo + mantequilla)', cat: 'patron', emoji: '🥩', pts: 97, desc: 'Máxima eficiencia evolutiva. Alta densidad, cero fibra, bilis activa, CMM sin bloqueos. El diseño fisiológico humano.' },
+  { nombre: 'Dieta mediterránea estándar', cat: 'patron', emoji: '🫒', pts: 45, desc: 'Mezcla de densidad media con exceso de fibra vegetal. Estimulo biliar moderado. ROI mixto.' },
+  { nombre: 'Día cetogénico animal', cat: 'patron', emoji: '🔥', pts: 88, desc: 'Alta grasa animal, proteína completa, fibra mínima. Cetosis activa. Muy próximo al diseño óptimo.' },
+];
+
+const ZONAS = [
+  { min: 80, max: 100, nombre: 'Máquina de Alta Densidad', sub: 'Eficiencia Evolutiva', color: '#2e7d32', clase: 'zona-80' },
+  { min: 40, max: 79,  nombre: 'Sobreviviente Inflamado',  sub: 'Desgaste Crónico',     color: '#b86a00', clase: 'zona-40' },
+  { min: 0,  max: 39,  nombre: 'Rumiante Colapsado',       sub: 'Inanición Estructural', color: '#c0392b', clase: 'zona-0' },
+];
+
+// ── STATE ──
+let params = { 1: null, 2: null, 3: null, 4: null, 5: null };
+let catActiva = 'todos';
+
+function getScore() {
+  const vals = Object.values(params).filter(v => v !== null);
+  return vals.reduce((s, v) => s + v, 0);
+}
+
+function getCompletado() {
+  return Object.values(params).every(v => v !== null);
+}
+
+function getZona(score) {
+  return ZONAS.find(z => score >= z.min && score <= z.max) || ZONAS[2];
+}
+
+// ── MARCADOR ──
+function updateMarcador() {
+  const completado = getCompletado();
+  const score = getScore();
+  const numEl = document.getElementById('score-num');
+  const nombreEl = document.getElementById('score-nombre');
+  const descEl = document.getElementById('score-desc');
+  const barraEl = document.getElementById('barra-fill');
+
+  if (!completado) {
+    const completos = Object.values(params).filter(v => v !== null).length;
+    numEl.textContent = score > 0 ? score : '—';
+    numEl.style.color = 'var(--text3)';
+    nombreEl.textContent = `${completos}/5 parámetros`;
+    nombreEl.style.color = 'var(--text3)';
+    descEl.textContent = 'Completa los 5 parámetros para ver tu diagnóstico.';
+    barraEl.style.width = (score / 100 * 100) + '%';
+    barraEl.style.background = 'var(--border2)';
+    return;
+  }
+
+  const zona = getZona(score);
+  numEl.textContent = score;
+  numEl.style.color = zona.color;
+  nombreEl.textContent = zona.nombre;
+  nombreEl.style.color = zona.color;
+  descEl.textContent = zona.sub;
+  barraEl.style.width = score + '%';
+  barraEl.style.background = zona.color;
+
+  // Resultado tab
+  const detalle = document.getElementById('resultado-detalle');
+  const labels = ['CMM / Ventana', 'ROI / Volumen', 'Cetosis / Densidad', 'Fibra', 'Bichos / Bilis'];
+  detalle.innerHTML = `
+    <div style="font-size:22px;font-family:var(--serif);font-weight:600;color:${zona.color};margin-bottom:4px">${score} / 100</div>
+    <div style="font-style:italic;color:${zona.color};margin-bottom:12px">${zona.nombre}</div>
+    ${labels.map((l, i) => `
+      <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:0.5px solid var(--border)">
+        <span style="color:var(--text2)">${l}</span>
+        <span style="font-weight:500;color:${params[i+1] === 20 ? 'var(--verde)' : params[i+1] === 10 ? 'var(--amber)' : 'var(--rojo)'}">${params[i+1]} pts</span>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ── PARÁMETROS ──
+function setParam(n, val, el) {
+  params[n] = val;
+
+  // Limpiar selección de ese parámetro
+  const card = document.getElementById('pc-' + n);
+  card.querySelectorAll('.opcion').forEach(o => {
+    o.classList.remove('sel-0', 'sel-10', 'sel-20');
+  });
+  el.classList.add('sel-' + val);
+
+  // Badge
+  const badge = document.getElementById('pscore-' + n);
+  badge.textContent = val;
+  badge.style.color = val === 20 ? 'var(--verde)' : val === 10 ? 'var(--amber)' : 'var(--rojo)';
+
+  updateMarcador();
+  guardarParams();
+}
+
+function resetParams() {
+  params = { 1: null, 2: null, 3: null, 4: null, 5: null };
+  [1,2,3,4,5].forEach(n => {
+    document.getElementById('pc-' + n).querySelectorAll('.opcion').forEach(o => {
+      o.classList.remove('sel-0', 'sel-10', 'sel-20');
+    });
+    const badge = document.getElementById('pscore-' + n);
+    badge.textContent = '—';
+    badge.style.color = 'var(--text3)';
+  });
+  updateMarcador();
+  localStorage.removeItem('dieta_params_' + getTodayKey());
+}
+
+function guardarParams() {
+  localStorage.setItem('dieta_params_' + getTodayKey(), JSON.stringify(params));
+}
+
+function cargarParams() {
+  const saved = localStorage.getItem('dieta_params_' + getTodayKey());
+  if (!saved) return;
+  const p = JSON.parse(saved);
+  Object.keys(p).forEach(n => {
+    if (p[n] !== null) {
+      const card = document.getElementById('pc-' + n);
+      const opciones = card.querySelectorAll('.opcion');
+      const idx = [0, 10, 20].indexOf(p[n]);
+      if (idx >= 0) {
+        setParam(parseInt(n), p[n], opciones[idx]);
+      }
+    }
+  });
+}
+
+// ── ALIMENTOS ──
+function colorPts(pts) {
+  if (pts >= 80) return 'var(--verde)';
+  if (pts >= 40) return 'var(--amber)';
+  return 'var(--rojo)';
+}
+
+function renderAlimentos() {
+  const q = document.getElementById('alimento-search').value.toLowerCase().trim();
+  const lista = document.getElementById('alimentos-lista');
+
+  let filtrados = ALIMENTOS.filter(a => {
+    const matchCat = catActiva === 'todos' || a.cat === catActiva;
+    const matchQ = !q || a.nombre.toLowerCase().includes(q) || a.desc.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  }).sort((a, b) => b.pts - a.pts);
+
+  if (!filtrados.length) {
+    lista.innerHTML = '<div class="empty">Sin resultados para esa búsqueda.</div>';
+    return;
+  }
+
+  lista.innerHTML = filtrados.map(a => `
+    <div class="alimento-card">
+      <div class="alimento-emoji">${a.emoji}</div>
+      <div class="alimento-info">
+        <div class="alimento-nombre">${a.nombre}</div>
+        <div class="alimento-desc">${a.desc}</div>
+      </div>
+      <div class="alimento-pts" style="color:${colorPts(a.pts)}">${a.pts}</div>
+    </div>
+  `).join('');
+}
+
+function filtrarAlimentos() { renderAlimentos(); }
+
+function setCat(btn) {
+  document.querySelectorAll('#cat-chips .chip').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  catActiva = btn.dataset.cat;
+  renderAlimentos();
+}
+
+// ── TABS ──
+function switchTab(tab) {
+  ['parametros', 'alimentos', 'resultado'].forEach(t => {
+    document.getElementById('sec-' + t)?.classList.remove('active');
+    document.getElementById('tab-' + t)?.classList.remove('active');
+  });
+  document.getElementById('sec-' + tab)?.classList.add('active');
+  document.getElementById('tab-' + tab)?.classList.add('active');
+}
+
+// ── UTILS ──
+function getTodayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// ── BOOT ──
+function initDieta() {
+  const now = new Date();
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  document.getElementById('hoy-fecha').textContent = `${now.getDate()} ${meses[now.getMonth()]} ${now.getFullYear()}`;
+  document.getElementById('hoy-dia').textContent = dias[now.getDay()];
+
+  cargarParams();
+  updateMarcador();
+  renderAlimentos();
+});
+
+
+// ═══ NAVEGACIÓN PRINCIPAL ═══
+function switchMain(section) {
+  document.getElementById('section-calc').style.display = section === 'calc' ? 'block' : 'none';
+  document.getElementById('section-dieta').style.display = section === 'dieta' ? 'block' : 'none';
+
+  const btnCalc = document.getElementById('main-nav-calc');
+  const btnDieta = document.getElementById('main-nav-dieta');
+  btnCalc.style.color = section === 'calc' ? '#d4820a' : '#a07040';
+  btnDieta.style.color = section === 'dieta' ? '#2e7d32' : '#a07040';
+  btnDieta.style.fontWeight = section === 'dieta' ? '500' : '400';
+  btnCalc.style.fontWeight = section === 'calc' ? '500' : '400';
+
+  // Si se activa dieta, inicializar
+  if (section === 'dieta') {
+    initDieta();
+  }
+}
+</script>
+
 <script>
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
