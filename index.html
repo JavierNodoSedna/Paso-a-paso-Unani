@@ -888,7 +888,7 @@ html, body {
 
 <!-- ═══ SECCIÓN DIETA ═══ -->
 <div id="section-dieta" style="display:none">
-<div id="app-dieta">
+<div id="app-dieta" style="max-width:480px;margin:0 auto;padding:24px 18px 80px;">
 
 
   <!-- HEADER -->
@@ -1129,6 +1129,7 @@ function saveBebidas(b) { saveLS('bebidas_perfil', b); }
 function getCalcProp()  { return parseFloat(localStorage.getItem('calc_proporcion') || '4.0'); }
 function saveCalcProp(v){ localStorage.setItem('calc_proporcion', String(v)); }
 function getSueroConc() { return parseFloat(localStorage.getItem('suero_conc') || '50'); }
+function esp(n, dec=2) { return n.toFixed(dec).replace('.', ','); }
 function mlPorGramo(conc) { return conc > 0 ? 1000 / conc : 0; }
 
 function faseInfo(p) {
@@ -1160,7 +1161,7 @@ function calcUpdate() {
   saveCalcProp(prop);
   updateSliderTrack(slider);
 
-  document.getElementById('calc-prop-val').textContent = prop.toFixed(2);
+  document.getElementById('calc-prop-val').textContent = esp(prop);
 
   const next = Math.min(prop + 0.5, 15);
   renderCalcResults(prop, next);
@@ -1260,26 +1261,29 @@ function renderCalcResults(prop, nextProp) {
     const mlSuero  = usaSuero ? salAhora * mlG : 0;
     const fase     = faseInfo(prop);
 
-    const salDirecta = ((b.ml / 1000) * prop).toFixed(2);
+    const salDirectaG = (b.ml / 1000) * prop;
+    const mlSueroOut  = salAhora * 1000 / getSueroConc();
+    const mlSueroIn   = salDirectaG * 1000 / getSueroConc();
+
     return `<div class="brc ${usaSuero ? 'with-suero' : ''}">
       <div class="brc-icon">${b.emoji}</div>
-      <div class="brc-info">
+      <div style="min-width:80px;flex-shrink:0;margin-right:8px">
         <div class="brc-name">${b.nombre}</div>
-        <div class="brc-vol">${b.ml} ml · <span style="color:${fase.col}">${fase.txt}</span></div>
-
+        <div class="brc-vol">${b.ml} ml</div>
+        <div class="brc-vol" style="color:${fase.col}">${fase.txt}</div>
       </div>
-      <div class="brc-rows">
+      <div class="brc-rows" style="flex:1">
         <div class="brc-row">
           <span class="brc-row-lbl" style="color:var(--text3)">Directo</span>
-          <span class="brc-row-val" style="color:var(--orange)">${salDirecta} g</span>
+          <span class="brc-row-val" style="color:var(--orange)">${esp(salDirectaG)} g</span>
         </div>
         <div class="brc-row">
-          <span class="brc-row-lbl" style="color:#1a7ab8">Con suero extra</span>
-          <span class="brc-row-val" style="color:#1a7ab8">${(salAhora * 1000 / getSueroConc()).toFixed(0)} ml</span>
+          <span class="brc-row-lbl" style="color:#1a7ab8">Suero Out</span>
+          <span class="brc-row-val" style="color:#1a7ab8">${Math.round(mlSueroOut)} ml · <span style="font-size:11px">${esp(salAhora)} g</span></span>
         </div>
         <div class="brc-row">
-          <span class="brc-row-lbl" style="color:#2e7d32">Con suero dentro</span>
-          <span class="brc-row-val" style="color:#2e7d32">${Math.round((prop * b.ml / 1000) / (getSueroConc() / 1000))} ml</span>
+          <span class="brc-row-lbl" style="color:#2e7d32">Suero In</span>
+          <span class="brc-row-val" style="color:#2e7d32">${Math.round(mlSueroIn)} ml · <span style="font-size:11px">${esp(salDirectaG)} g</span></span>
         </div>
       </div>
     </div>`;
@@ -1360,13 +1364,13 @@ function calcInverso() {
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px">
       <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:13px;text-align:center">
         <div style="font-size:11px;color:#1a7ab8;letter-spacing:1px;margin-bottom:6px">CON SUERO</div>
-        <div style="font-size:34px;font-weight:500;color:${fi.col};line-height:1">${propReal.toFixed(2)}</div>
+        <div style="font-size:34px;font-weight:500;color:${fi.col};line-height:1">${esp(propReal)}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px">g/L real</div>
-        <div style="font-size:10px;color:#1a7ab8;margin-top:2px">+${(sal*mlG).toFixed(0)} ml suero · ${volReal.toFixed(0)} ml tot.</div>
+        <div style="font-size:10px;color:#1a7ab8;margin-top:2px">+${Math.round(sal*mlG)} ml suero · ${Math.round(volReal)} ml tot.</div>
       </div>
       <div style="background:var(--bg3);border:0.5px solid var(--border);border-radius:var(--radius-sm);padding:13px;text-align:center;opacity:0.55">
         <div style="font-size:11px;color:var(--text3);letter-spacing:1px;margin-bottom:6px">SIN SUERO</div>
-        <div style="font-size:34px;font-weight:500;color:${fib.col};line-height:1">${propBruta.toFixed(2)}</div>
+        <div style="font-size:34px;font-weight:500;color:${fib.col};line-height:1">${esp(propBruta)}</div>
         <div style="font-size:10px;color:var(--text3);margin-top:4px">g/L aparente</div>
         <div style="font-size:10px;color:var(--text3);margin-top:2px">solo ${ml} ml</div>
       </div>
@@ -1394,7 +1398,7 @@ window.addEventListener('DOMContentLoaded', () => {
   const propInicial = getCalcProp();
   const sliderEl = document.getElementById('calc-slider');
   sliderEl.value = propInicial;           // valor real al slider
-  document.getElementById('calc-prop-val').textContent = propInicial.toFixed(2);
+  document.getElementById('calc-prop-val').textContent = esp(propInicial);
   // Esperar al primer paint para que getBoundingClientRect tenga dimensiones reales
   requestAnimationFrame(() => {
     requestAnimationFrame(() => updateSliderTrack(sliderEl));
@@ -1634,25 +1638,27 @@ function initDieta() {
   cargarParams();
   updateMarcador();
   renderAlimentos();
-});
+}
 
 
 // ═══ NAVEGACIÓN PRINCIPAL ═══
 function switchMain(section) {
-  document.getElementById('section-calc').style.display = section === 'calc' ? 'block' : 'none';
-  document.getElementById('section-dieta').style.display = section === 'dieta' ? 'block' : 'none';
-
-  const btnCalc = document.getElementById('main-nav-calc');
+  const secCalc  = document.getElementById('section-calc');
+  const secDieta = document.getElementById('section-dieta');
+  const btnCalc  = document.getElementById('main-nav-calc');
   const btnDieta = document.getElementById('main-nav-dieta');
-  btnCalc.style.color = section === 'calc' ? '#d4820a' : '#a07040';
-  btnDieta.style.color = section === 'dieta' ? '#2e7d32' : '#a07040';
-  btnDieta.style.fontWeight = section === 'dieta' ? '500' : '400';
-  btnCalc.style.fontWeight = section === 'calc' ? '500' : '400';
 
-  // Si se activa dieta, inicializar
-  if (section === 'dieta') {
-    initDieta();
+  if (secCalc)  secCalc.style.display  = section === 'calc'  ? 'block' : 'none';
+  if (secDieta) secDieta.style.display = section === 'dieta' ? 'block' : 'none';
+  if (btnCalc) {
+    btnCalc.style.color      = section === 'calc'  ? '#d4820a' : '#a07040';
+    btnCalc.style.fontWeight = section === 'calc'  ? '500' : '400';
   }
+  if (btnDieta) {
+    btnDieta.style.color      = section === 'dieta' ? '#2e7d32' : '#a07040';
+    btnDieta.style.fontWeight = section === 'dieta' ? '500' : '400';
+  }
+  if (section === 'dieta') initDieta();
 }
 </script>
 
