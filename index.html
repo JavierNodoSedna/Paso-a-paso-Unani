@@ -287,7 +287,7 @@
     white-space: nowrap;
   }
   .brc-row-val {
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 500;
     text-align: right;
     white-space: nowrap;
@@ -1267,10 +1267,10 @@ function renderCalcResults(prop, nextProp) {
 
     return `<div class="brc ${usaSuero ? 'with-suero' : ''}">
       <div class="brc-icon">${b.emoji}</div>
-      <div style="min-width:80px;flex-shrink:0;margin-right:8px">
-        <div class="brc-name">${b.nombre}</div>
-        <div class="brc-vol">${b.ml} ml</div>
-        <div class="brc-vol" style="color:${fase.col}">${fase.txt}</div>
+      <div style="min-width:60px;max-width:60px;flex-shrink:0;margin-right:8px">
+        <div class="brc-name" style="font-size:11px">${b.nombre}</div>
+        <div class="brc-vol" style="font-size:10px">${b.ml} ml</div>
+        <div class="brc-vol" style="font-size:10px;color:${fase.col}">${fase.txt}</div>
       </div>
       <div class="brc-rows" style="flex:1">
         <div class="brc-row">
