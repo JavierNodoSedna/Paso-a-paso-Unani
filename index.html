@@ -580,37 +580,43 @@ html, body {
 /* Opciones 0/10/20 */
 .opciones {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 6px;
+  grid-template-columns: 1fr 1fr 1fr 1fr 1fr;
+  gap: 4px;
 }
 .opcion {
   border-radius: var(--drsm);
   border: 0.5px solid var(--border);
   background: var(--bg2);
-  padding: 10px 8px;
+  padding: 8px 4px;
   cursor: pointer;
   transition: all 0.15s;
   text-align: center;
 }
 .opcion:hover { border-color: var(--border2); }
-.opcion.sel-0 { background: var(--rojo-bg); border-color: rgba(192,57,43,0.35); }
+.opcion.sel-0  { background: var(--rojo-bg);  border-color: rgba(192,57,43,0.35); }
+.opcion.sel-5  { background: var(--rojo-bg);  border-color: rgba(192,57,43,0.2);  opacity:0.8; }
 .opcion.sel-10 { background: var(--amber-bg); border-color: rgba(184,106,0,0.35); }
+.opcion.sel-15 { background: var(--verde-bg); border-color: rgba(46,125,50,0.2);  opacity:0.8; }
 .opcion.sel-20 { background: var(--verde-bg); border-color: rgba(46,125,50,0.35); }
 
 .opcion-pts {
-  font-size: 16px;
+  font-size: 14px;
   font-weight: 500;
   font-family: var(--serif);
   line-height: 1;
-  margin-bottom: 5px;
+  margin-bottom: 4px;
 }
 .opcion-pts.c0  { color: var(--rojo); }
+.opcion-pts.c5  { color: var(--rojo); opacity:0.7; }
 .opcion-pts.c10 { color: var(--amber); }
+.opcion-pts.c15 { color: var(--verde); opacity:0.7; }
 .opcion-pts.c20 { color: var(--verde); }
 
-.opcion-label { font-size: 9px; color: var(--text3); letter-spacing: 0.5px; line-height: 1.4; }
+.opcion-label { font-size: 8px; color: var(--text3); letter-spacing: 0; line-height: 1.3; }
 .opcion.sel-0  .opcion-label { color: var(--rojo); }
+.opcion.sel-5  .opcion-label { color: var(--rojo); opacity:0.7; }
 .opcion.sel-10 .opcion-label { color: var(--amber); }
+.opcion.sel-15 .opcion-label { color: var(--verde); opacity:0.7; }
 .opcion.sel-20 .opcion-label { color: var(--verde); }
 
 /* ── ALIMENTOS ── */
@@ -936,15 +942,23 @@ html, body {
       <div class="opciones">
         <div class="opcion" onclick="setParam(1, 0, this)">
           <div class="opcion-pts c0">0</div>
-          <div class="opcion-label">CMM apagado<br>5+ ingestas/día<br>Ventana &gt;8h</div>
+          <div class="opcion-label">5+ ingestas<br>CMM apagado</div>
+        </div>
+        <div class="opcion" onclick="setParam(1, 5, this)">
+          <div class="opcion-pts c5">5</div>
+          <div class="opcion-label">4 ingestas<br>sin ayuno</div>
         </div>
         <div class="opcion" onclick="setParam(1, 10, this)">
           <div class="opcion-pts c10">10</div>
-          <div class="opcion-label">3 comidas<br>sin colaciones<br>Ventana 4–8h</div>
+          <div class="opcion-label">3 comidas<br>Ventana 4–8h</div>
+        </div>
+        <div class="opcion" onclick="setParam(1, 15, this)">
+          <div class="opcion-pts c15">15</div>
+          <div class="opcion-label">2 ingestas<br>ayuno 12–16h</div>
         </div>
         <div class="opcion" onclick="setParam(1, 20, this)">
           <div class="opcion-pts c20">20</div>
-          <div class="opcion-label">1–2 ingestas<br>Ayuno &gt;16h<br>Ventana &lt;4h</div>
+          <div class="opcion-label">1–2 ingestas<br>ayuno &gt;16h</div>
         </div>
       </div>
     </div>
@@ -959,15 +973,23 @@ html, body {
       <div class="opciones">
         <div class="opcion" onclick="setParam(2, 0, this)">
           <div class="opcion-pts c0">0</div>
-          <div class="opcion-label">Más de 1.5 kg<br>sólidos/día<br>ROI negativo</div>
+          <div class="opcion-label">&gt;1,5 kg<br>ROI negativo</div>
+        </div>
+        <div class="opcion" onclick="setParam(2, 5, this)">
+          <div class="opcion-pts c5">5</div>
+          <div class="opcion-label">1–1,5 kg<br>ROI bajo</div>
         </div>
         <div class="opcion" onclick="setParam(2, 10, this)">
           <div class="opcion-pts c10">10</div>
-          <div class="opcion-label">600 g – 1 kg<br>sólidos/día<br>ROI neutro</div>
+          <div class="opcion-label">600g–1kg<br>ROI neutro</div>
+        </div>
+        <div class="opcion" onclick="setParam(2, 15, this)">
+          <div class="opcion-pts c15">15</div>
+          <div class="opcion-label">400–600g<br>ROI bueno</div>
         </div>
         <div class="opcion" onclick="setParam(2, 20, this)">
           <div class="opcion-pts c20">20</div>
-          <div class="opcion-label">Menos de 600 g<br>sólidos/día<br>ROI máximo</div>
+          <div class="opcion-label">&lt;400g<br>ROI máximo</div>
         </div>
       </div>
     </div>
@@ -982,15 +1004,23 @@ html, body {
       <div class="opciones">
         <div class="opcion" onclick="setParam(3, 0, this)">
           <div class="opcion-pts c0">0</div>
-          <div class="opcion-label">Sin grasa animal<br>Baja absorción<br>No cetosis</div>
+          <div class="opcion-label">Sin grasa<br>vegano puro</div>
+        </div>
+        <div class="opcion" onclick="setParam(3, 5, this)">
+          <div class="opcion-pts c5">5</div>
+          <div class="opcion-label">Poca grasa<br>animal</div>
         </div>
         <div class="opcion" onclick="setParam(3, 10, this)">
           <div class="opcion-pts c10">10</div>
-          <div class="opcion-label">Carnes magras<br>Densidad media<br>No cetosis</div>
+          <div class="opcion-label">Carnes magras<br>sin cetosis</div>
+        </div>
+        <div class="opcion" onclick="setParam(3, 15, this)">
+          <div class="opcion-pts c15">15</div>
+          <div class="opcion-label">Grasa animal<br>moderada</div>
         </div>
         <div class="opcion" onclick="setParam(3, 20, this)">
           <div class="opcion-pts c20">20</div>
-          <div class="opcion-label">Alta grasa animal<br>100% asimilación<br>En cetosis</div>
+          <div class="opcion-label">Alta grasa<br>en cetosis</div>
         </div>
       </div>
     </div>
@@ -1005,15 +1035,23 @@ html, body {
       <div class="opciones">
         <div class="opcion" onclick="setParam(4, 0, this)">
           <div class="opcion-pts c0">0</div>
-          <div class="opcion-label">Más de 30 g<br>fibra/día<br>Desgaste extremo</div>
+          <div class="opcion-label">&gt;30g<br>desgaste<br>extremo</div>
+        </div>
+        <div class="opcion" onclick="setParam(4, 5, this)">
+          <div class="opcion-pts c5">5</div>
+          <div class="opcion-label">20–30g<br>desgaste<br>alto</div>
         </div>
         <div class="opcion" onclick="setParam(4, 10, this)">
           <div class="opcion-pts c10">10</div>
-          <div class="opcion-label">15 – 30 g<br>fibra/día<br>Desgaste moderado</div>
+          <div class="opcion-label">15–20g<br>desgaste<br>moderado</div>
+        </div>
+        <div class="opcion" onclick="setParam(4, 15, this)">
+          <div class="opcion-pts c15">15</div>
+          <div class="opcion-label">5–15g<br>desgaste<br>bajo</div>
         </div>
         <div class="opcion" onclick="setParam(4, 20, this)">
           <div class="opcion-pts c20">20</div>
-          <div class="opcion-label">Menos de 5 g<br>por evento<br>Desgaste cero</div>
+          <div class="opcion-label">&lt;5g<br>desgaste<br>cero</div>
         </div>
       </div>
     </div>
@@ -1028,15 +1066,23 @@ html, body {
       <div class="opciones">
         <div class="opcion" onclick="setParam(5, 0, this)">
           <div class="opcion-pts c0">0</div>
-          <div class="opcion-label">Sin grasa<br>Sin bilis<br>Riesgo SIBO</div>
+          <div class="opcion-label">Sin grasa<br>SIBO activo</div>
+        </div>
+        <div class="opcion" onclick="setParam(5, 5, this)">
+          <div class="opcion-pts c5">5</div>
+          <div class="opcion-label">Poca grasa<br>bilis mínima</div>
         </div>
         <div class="opcion" onclick="setParam(5, 10, this)">
           <div class="opcion-pts c10">10</div>
-          <div class="opcion-label">Bilis pobre<br>pH parcial<br>Sin SIBO claro</div>
+          <div class="opcion-label">Bilis pobre<br>pH parcial</div>
+        </div>
+        <div class="opcion" onclick="setParam(5, 15, this)">
+          <div class="opcion-pts c15">15</div>
+          <div class="opcion-label">Bilis activa<br>sin vinagre</div>
         </div>
         <div class="opcion" onclick="setParam(5, 20, this)">
           <div class="opcion-pts c20">20</div>
-          <div class="opcion-label">Bilis esterilizante<br>Vinagre + Roquefort<br>pH alcalino</div>
+          <div class="opcion-label">Bilis máxima<br>vinagre+<br>Roquefort</div>
         </div>
       </div>
     </div>
@@ -1526,14 +1572,18 @@ function setParam(n, val, el) {
   // Limpiar selección de ese parámetro
   const card = document.getElementById('pc-' + n);
   card.querySelectorAll('.opcion').forEach(o => {
-    o.classList.remove('sel-0', 'sel-10', 'sel-20');
+    o.classList.remove('sel-0', 'sel-5', 'sel-10', 'sel-15', 'sel-20');
   });
   el.classList.add('sel-' + val);
 
   // Badge
   const badge = document.getElementById('pscore-' + n);
   badge.textContent = val;
-  badge.style.color = val === 20 ? 'var(--verde)' : val === 10 ? 'var(--amber)' : 'var(--rojo)';
+  if (val === 20) badge.style.color = 'var(--verde)';
+  else if (val === 15) badge.style.color = 'var(--verde)';
+  else if (val === 10) badge.style.color = 'var(--amber)';
+  else if (val === 5)  badge.style.color = 'var(--rojo)';
+  else badge.style.color = 'var(--rojo)';
 
   updateMarcador();
   guardarParams();
@@ -1565,7 +1615,7 @@ function cargarParams() {
     if (p[n] !== null) {
       const card = document.getElementById('pc-' + n);
       const opciones = card.querySelectorAll('.opcion');
-      const idx = [0, 10, 20].indexOf(p[n]);
+      const idx = [0, 5, 10, 15, 20].indexOf(p[n]);
       if (idx >= 0) {
         setParam(parseInt(n), p[n], opciones[idx]);
       }
