@@ -1,12 +1,12 @@
 {
-  "name": "Calculadora · Proporción Sal",
-  "short_name": "Proporción",
-  "description": "Calculadora de proporción sal/líquido según el método David Huarte (Academia Unani)",
+  "name": "Unani · Sal & Dieta",
+  "short_name": "Unani",
+  "description": "Calculadora de proporción sal/líquido y sistema de puntuación dietética — método David Duarte",
   "start_url": "/Paso-a-paso-Unani/",
   "scope": "/Paso-a-paso-Unani/",
   "display": "standalone",
-  "background_color": "#1a1208",
-  "theme_color": "#1a1208",
+  "background_color": "#fdf6ed",
+  "theme_color": "#fdf6ed",
   "orientation": "portrait-primary",
   "lang": "es",
   "icons": [

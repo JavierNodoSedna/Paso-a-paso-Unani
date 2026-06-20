@@ -1,4 +1,4 @@
-const CACHE_NAME = 'calc-proporcion-v1';
+const CACHE_NAME = 'unani-sal-dieta-v1';
 const ASSETS = [
   '/Paso-a-paso-Unani/',
   '/Paso-a-paso-Unani/index.html',
@@ -7,15 +7,11 @@ const ASSETS = [
   '/Paso-a-paso-Unani/icons/icon-512.png',
 ];
 
-// Instalación
 self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(ASSETS))
-  );
+  e.waitUntil(caches.open(CACHE_NAME).then(c => c.addAll(ASSETS)));
   self.skipWaiting();
 });
 
-// Activación: limpiar caches viejas
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys =>
@@ -25,30 +21,23 @@ self.addEventListener('activate', e => {
   self.clients.claim();
 });
 
-// Fetch: cache-first para assets propios
 self.addEventListener('fetch', e => {
   const url = new URL(e.request.url);
-
-  // Fuentes Google — network only
   if (url.hostname.includes('fonts.googleapis.com') || url.hostname.includes('fonts.gstatic.com')) {
     e.respondWith(fetch(e.request).catch(() => new Response('', { status: 408 })));
     return;
   }
-
-  // Assets propios — cache first
   e.respondWith(
     caches.match(e.request).then(cached => {
       if (cached) return cached;
       return fetch(e.request).then(response => {
         if (response.ok && url.origin === self.location.origin) {
           const clone = response.clone();
-          caches.open(CACHE_NAME).then(cache => cache.put(e.request, clone));
+          caches.open(CACHE_NAME).then(c => c.put(e.request, clone));
         }
         return response;
       }).catch(() => {
-        if (e.request.mode === 'navigate') {
-          return caches.match('/Paso-a-paso-Unani/index.html');
-        }
+        if (e.request.mode === 'navigate') return caches.match('/Paso-a-paso-Unani/index.html');
       });
     })
   );
