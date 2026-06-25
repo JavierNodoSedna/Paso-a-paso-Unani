@@ -724,6 +724,129 @@ html, body {
 }
 .chip:hover { border-color: var(--border2); color: var(--text2); }
 .chip.active { background: var(--verde); border-color: var(--verde); color: #fff; }
+
+  /* ── SEGUIMIENTO ── */
+  .seg-metric-card {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--dr);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+  }
+  .seg-metric-title {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--text3);
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .seg-lecturas {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+  .seg-lectura-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    background: var(--bg2);
+    border-radius: var(--drsm);
+  }
+  .seg-hora { font-size: 11px; color: var(--text3); min-width: 42px; }
+  .seg-val  { font-size: 16px; font-weight: 500; flex: 1; }
+  .seg-del  { background: none; border: none; color: var(--text3); cursor: pointer; font-size: 16px; padding: 0 4px; }
+  .seg-del:hover { color: var(--rojo); }
+  .seg-media {
+    font-size: 11px;
+    color: var(--text3);
+    text-align: right;
+    margin-top: 4px;
+  }
+  .seg-media strong { color: var(--text2); }
+  .seg-add-row {
+    display: grid;
+    grid-template-columns: 100px 1fr 80px;
+    gap: 8px;
+    align-items: end;
+    margin-top: 10px;
+  }
+  .field-sm {
+    background: var(--bg2);
+    border: 0.5px solid var(--border);
+    border-radius: var(--drsm);
+    color: var(--text);
+    font-family: var(--mono);
+    font-size: 15px;
+    padding: 9px 10px;
+    width: 100%;
+    outline: none;
+    -webkit-appearance: none;
+  }
+  .field-sm:focus { border-color: var(--verde); }
+  .btn-seg {
+    padding: 9px 0;
+    border-radius: var(--drsm);
+    border: none;
+    background: var(--verde);
+    color: #fff;
+    font-family: var(--mono);
+    font-size: 12px;
+    font-weight: 500;
+    cursor: pointer;
+    width: 100%;
+  }
+  /* Historial */
+  .hist-dia {
+    background: var(--surface);
+    border: 0.5px solid var(--border);
+    border-radius: var(--dr);
+    padding: 12px 16px;
+    margin-bottom: 8px;
+    cursor: pointer;
+  }
+  .hist-dia-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+  }
+  .hist-fecha { font-size: 12px; font-weight: 500; color: var(--text); }
+  .hist-score { font-family: var(--serif); font-size: 18px; font-weight: 600; }
+  .hist-metricas {
+    font-size: 11px;
+    color: var(--text3);
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .hist-metricas span { display: flex; align-items: center; gap: 4px; }
+  .hist-body { display: none; margin-top: 10px; }
+  .hist-body.open { display: block; }
+  .hist-param-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    padding: 4px 0;
+    border-bottom: 0.5px solid var(--border);
+    color: var(--text2);
+  }
+  .hist-param-row:last-child { border-bottom: none; }
+  /* pH indicator */
+  .ph-badge {
+    display: inline-block;
+    padding: 1px 7px;
+    border-radius: 10px;
+    font-size: 10px;
+    font-weight: 500;
+  }
+  .ph-acido  { background: var(--rojo-bg); color: var(--rojo); }
+  .ph-neutro { background: var(--amber-bg); color: var(--amber); }
+  .ph-alcalino { background: var(--verde-bg); color: var(--verde); }
 </style>
 </head>
 <body>
@@ -749,6 +872,12 @@ html, body {
     padding:8px 0; display:flex; flex-direction:column;
     align-items:center; gap:3px; color:#a07040;
   "><span style="font-size:20px">🥩</span>Dieta</button>
+  <button id="main-nav-seguimiento" onclick="switchMain('seguimiento')" style="
+    flex:1; background:none; border:none; cursor:pointer;
+    font-family:'DM Mono',monospace; font-size:11px; font-weight:400;
+    padding:8px 0; display:flex; flex-direction:column;
+    align-items:center; gap:3px; color:#a07040;
+  "><span style="font-size:20px">📊</span>Seguim.</button>
 </nav>
 
 <div id="section-calc" style="display:block">
@@ -1149,8 +1278,96 @@ html, body {
   </div>
 
 
+
+
 </div><!-- /app-dieta -->
 </div><!-- /section-dieta -->
+
+<!-- ═══ SECCIÓN SEGUIMIENTO (nivel superior) ═══ -->
+<div id="section-seguimiento" style="display:none">
+<div id="app-seguimiento" style="max-width:480px;margin:0 auto;padding:24px 18px 80px;">
+  <div class="app-header">
+    <div>
+      <div class="logo" style="color:#1a7ab8">Seguimiento</div>
+      <div class="logo-sub">pH · Sal · Dieta · Historial</div>
+    </div>
+    <div class="header-date">
+      <strong id="seg-hoy-fecha">—</strong>
+      <span id="seg-hoy-dia"></span>
+    </div>
+  </div>
+
+  <!-- ═══ SEGUIMIENTO ═══ -->
+
+    <div class="section-title">Seguimiento</div>
+    <div class="section-desc">Registra pH, proporción de sal y puntuación diaria. Histórico de los últimos 14 días.</div>
+
+    <!-- Puntuación del día -->
+    <div class="seg-metric-card">
+      <div class="seg-metric-title">
+        <span>Puntuación Dieta</span>
+        <span id="seg-score-badge" style="font-family:var(--serif);font-size:18px;font-weight:600;color:var(--text3)">—</span>
+      </div>
+      <div id="seg-score-desc" style="font-size:11px;color:var(--text3)">Completa los parámetros para ver la puntuación.</div>
+      <button class="btn-seg" style="margin-top:10px" onclick="guardarDiaCompleto()">💾 Guardar día en historial</button>
+    </div>
+
+    <!-- pH -->
+    <div class="seg-metric-card">
+      <div class="seg-metric-title">
+        <span>pH Urinario</span>
+        <span id="seg-ph-media" style="font-size:11px"></span>
+      </div>
+      <div class="seg-lecturas" id="seg-ph-lista"></div>
+      <div class="seg-add-row">
+        <input class="field-sm" type="time" id="seg-ph-hora">
+        <input class="field-sm" type="number" id="seg-ph-val" placeholder="6.8" min="4" max="9" step="0.1" style="font-size:18px">
+        <button class="btn-seg" onclick="addLectura('ph')">+ pH</button>
+      </div>
+    </div>
+
+    <!-- Proporción sal -->
+    <div class="seg-metric-card">
+      <div class="seg-metric-title">
+        <span>Proporción Sal</span>
+        <span id="seg-sal-media" style="font-size:11px"></span>
+      </div>
+      <div class="seg-lecturas" id="seg-sal-lista"></div>
+      <div class="seg-add-row">
+        <input class="field-sm" type="time" id="seg-sal-hora">
+        <input class="field-sm" type="number" id="seg-sal-val" placeholder="8,50" min="0" max="15" step="0.25" style="font-size:18px">
+        <button class="btn-seg" onclick="addLectura('sal')">+ g/L</button>
+      </div>
+    </div>
+
+    <!-- Historial -->
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin:16px 0 10px">Historial — últimos 14 días</div>
+    <div id="seg-historial"></div>
+
+  
+  <!-- Backup -->
+  <div style="margin-top:20px;padding:16px;background:var(--surface);border:0.5px solid var(--border);border-radius:var(--dr)">
+    <div style="font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--text3);margin-bottom:12px">Copia de seguridad</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6">
+      Exporta todos tus datos antes de actualizar la app. El fichero JSON contiene historial, pH, proporción y configuración.
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      <button onclick="exportarDatos()" style="
+        padding:11px 0;border-radius:var(--drsm);border:0.5px solid var(--border);
+        background:var(--bg2);color:var(--text2);font-family:var(--mono);
+        font-size:12px;font-weight:500;cursor:pointer;
+      ">⬇ Exportar</button>
+      <label style="
+        padding:11px 0;border-radius:var(--drsm);border:0.5px solid var(--border);
+        background:var(--bg2);color:var(--text2);font-family:var(--mono);
+        font-size:12px;font-weight:500;cursor:pointer;text-align:center;display:block;
+      ">⬆ Importar<input type="file" accept=".json" onchange="importarDatos(event)" style="display:none"></label>
+    </div>
+    <div id="backup-msg" style="font-size:11px;color:var(--verde);margin-top:8px;min-height:16px;text-align:center"></div>
+  </div>
+
+</div><!-- /app-seguimiento -->
+</div><!-- /section-seguimiento -->
 
 <script>
 // ── UTILS ──
@@ -1674,6 +1891,7 @@ function switchTab(tab) {
   });
   document.getElementById('sec-' + tab)?.classList.add('active');
   document.getElementById('tab-' + tab)?.classList.add('active');
+
 }
 
 // ── UTILS ──
@@ -1695,24 +1913,233 @@ function initDieta() {
 }
 
 
+// ═══ SEGUIMIENTO JS ═══
+const PARAM_LABELS = ['CMM / Ventana', 'ROI / Volumen', 'Cetosis / Densidad', 'Fibra', 'Bichos / Bilis'];
+
+function phClass(v) {
+  if (v < 6)   return { cls: 'ph-acido',    txt: 'Ácido' };
+  if (v <= 7)  return { cls: 'ph-neutro',   txt: 'Neutro' };
+  return               { cls: 'ph-alcalino', txt: 'Alcalino' };
+}
+
+function getSegData() {
+  try { return JSON.parse(localStorage.getItem('seg_' + getTodayKey())) || { ph: [], sal: [] }; }
+  catch(e) { return { ph: [], sal: [] }; }
+}
+function saveSegData(d) { localStorage.setItem('seg_' + getTodayKey(), JSON.stringify(d)); }
+
+function getHistorial14() {
+  const hist = [];
+  const today = new Date();
+  for (let i = 0; i < 14; i++) {
+    const d = new Date(today);
+    d.setDate(d.getDate() - i);
+    const key = d.toISOString().slice(0, 10);
+    const params_raw = localStorage.getItem('dieta_params_' + key);
+    const seg_raw    = localStorage.getItem('seg_' + key);
+    const score_raw  = localStorage.getItem('dieta_score_' + key);
+    const params_d   = params_raw ? JSON.parse(params_raw) : null;
+    const seg_d      = seg_raw    ? JSON.parse(seg_raw)    : { ph: [], sal: [] };
+    const score      = score_raw  ? parseInt(score_raw)    : (params_d ? Object.values(params_d).reduce((s,v) => s + (v||0), 0) : null);
+    if (score !== null || seg_d.ph.length || seg_d.sal.length) {
+      hist.push({ key, date: d, score, params: params_d, ph: seg_d.ph, sal: seg_d.sal });
+    }
+  }
+  return hist;
+}
+
+function media(arr) {
+  if (!arr.length) return null;
+  return arr.reduce((s, x) => s + x.val, 0) / arr.length;
+}
+
+function addLectura(tipo) {
+  const horaEl = document.getElementById('seg-' + tipo + '-hora');
+  const valEl  = document.getElementById('seg-' + tipo + '-val');
+  const val    = parseFloat(valEl.value);
+  if (!val || val <= 0) { alert('Introduce un valor válido'); return; }
+  const hora = horaEl.value || new Date().toLocaleTimeString('es', {hour:'2-digit', minute:'2-digit'});
+  const d = getSegData();
+  d[tipo].push({ hora, val: parseFloat(val.toFixed(2)) });
+  saveSegData(d);
+  valEl.value = '';
+  renderSeguimientoHoy();
+}
+
+function deleteLectura(tipo, idx) {
+  const d = getSegData();
+  d[tipo].splice(idx, 1);
+  saveSegData(d);
+  renderSeguimientoHoy();
+}
+
+function guardarDiaCompleto() {
+  const score = getScore();
+  if (!getCompletado()) { alert('Completa los 5 parámetros antes de guardar'); return; }
+  localStorage.setItem('dieta_score_' + getTodayKey(), String(score));
+  renderHistorial14();
+  alert('✓ Día guardado en el historial');
+}
+
+function renderSeguimientoHoy() {
+  const d = getSegData();
+
+  // Score badge
+  const score = getScore();
+  const completado = getCompletado();
+  const scoreBadge = document.getElementById('seg-score-badge');
+  const scoreDesc  = document.getElementById('seg-score-desc');
+  if (scoreBadge) {
+    if (completado) {
+      const zona = getZona(score);
+      scoreBadge.textContent = score + ' pts';
+      scoreBadge.style.color = zona.color;
+      scoreDesc.textContent  = zona.nombre;
+      scoreDesc.style.color  = zona.color;
+    } else {
+      const n = Object.values(params).filter(v => v !== null).length;
+      scoreBadge.textContent = score > 0 ? score + ' pts' : '—';
+      scoreBadge.style.color = 'var(--text3)';
+      scoreDesc.textContent  = n + '/5 parámetros completados';
+      scoreDesc.style.color  = 'var(--text3)';
+    }
+  }
+
+  // pH
+  const phLista = document.getElementById('seg-ph-lista');
+  const phMedia = document.getElementById('seg-ph-media');
+  if (phLista) {
+    if (!d.ph.length) {
+      phLista.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:4px 0">Sin lecturas hoy</div>';
+    } else {
+      phLista.innerHTML = d.ph.map((l, i) => {
+        const pc = phClass(l.val);
+        return `<div class="seg-lectura-row">
+          <span class="seg-hora">${l.hora}</span>
+          <span class="seg-val" style="color:var(--text)">${String(l.val).replace('.',',')} <span class="ph-badge ${pc.cls}">${pc.txt}</span></span>
+          <button class="seg-del" onclick="deleteLectura('ph', ${i})">×</button>
+        </div>`;
+      }).join('');
+      const m = media(d.ph);
+      const pc = phClass(m);
+      phMedia.innerHTML = `Media: <strong class="${pc.cls}">${m.toFixed(2).replace('.',',')}</strong>`;
+    }
+  }
+
+  // Sal
+  const salLista = document.getElementById('seg-sal-lista');
+  const salMedia = document.getElementById('seg-sal-media');
+  if (salLista) {
+    if (!d.sal.length) {
+      salLista.innerHTML = '<div style="font-size:11px;color:var(--text3);padding:4px 0">Sin lecturas hoy</div>';
+    } else {
+      salLista.innerHTML = d.sal.map((l, i) => `
+        <div class="seg-lectura-row">
+          <span class="seg-hora">${l.hora}</span>
+          <span class="seg-val" style="color:var(--text)">${String(l.val).replace('.',',')} g/L</span>
+          <button class="seg-del" onclick="deleteLectura('sal', ${i})">×</button>
+        </div>`).join('');
+      const m = media(d.sal);
+      salMedia.innerHTML = `Media: <strong style="color:var(--text2)">${m.toFixed(2).replace('.',',')} g/L</strong>`;
+    }
+  }
+}
+
+function renderHistorial14() {
+  const hist = getHistorial14();
+  const el   = document.getElementById('seg-historial');
+  if (!el) return;
+  if (!hist.length) {
+    el.innerHTML = '<div style="font-size:12px;color:var(--text3);text-align:center;padding:20px 0">Aún no hay datos guardados.</div>';
+    return;
+  }
+
+  const dias = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+
+  el.innerHTML = hist.map((h, hi) => {
+    const isHoy = h.key === getTodayKey();
+    const fechaStr = isHoy ? '📅 Hoy' :
+      `${dias[h.date.getDay()]} ${h.date.getDate()} ${meses[h.date.getMonth()]}`;
+    const zona = h.score !== null ? getZona(h.score) : null;
+    const phM  = h.ph.length  ? media(h.ph).toFixed(1).replace('.',',')  : '—';
+    const salM = h.sal.length ? media(h.sal).toFixed(2).replace('.',',') : '—';
+    const bodyId = 'hbody-' + hi;
+
+    const paramsHTML = h.params ? PARAM_LABELS.map((l, i) => {
+      const v = h.params[i+1];
+      const col = v >= 15 ? 'var(--verde)' : v >= 10 ? 'var(--amber)' : 'var(--rojo)';
+      return `<div class="hist-param-row"><span>${l}</span><span style="color:${col};font-weight:500">${v} pts</span></div>`;
+    }).join('') : '<div style="font-size:11px;color:var(--text3)">Sin desglose guardado</div>';
+
+    return `<div class="hist-dia" onclick="toggleHist('${bodyId}', this)">
+      <div class="hist-dia-header">
+        <span class="hist-fecha">${fechaStr}</span>
+        ${zona ? `<span class="hist-score" style="color:${zona.color}">${h.score} pts</span>` : '<span style="color:var(--text3);font-size:12px">sin puntuación</span>'}
+      </div>
+      <div class="hist-metricas">
+        <span>🧪 pH ${phM}</span>
+        <span>⚗️ ${salM} g/L</span>
+        ${zona ? `<span style="color:${zona.color}">${zona.nombre}</span>` : ''}
+      </div>
+      <div class="hist-body" id="${bodyId}">
+        ${paramsHTML}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function toggleHist(bodyId, card) {
+  const body = document.getElementById(bodyId);
+  body.classList.toggle('open');
+}
+
+function initSeguimiento() {
+  // Fecha en header de seguimiento
+  const now2 = new Date();
+  const dias2  = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
+  const meses2 = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  const fEl = document.getElementById('seg-hoy-fecha');
+  const dEl = document.getElementById('seg-hoy-dia');
+  if (fEl) fEl.textContent = now2.getDate() + ' ' + meses2[now2.getMonth()] + ' ' + now2.getFullYear();
+  if (dEl) dEl.textContent = dias2[now2.getDay()];
+  // Poner hora actual en los inputs
+  const now = new Date();
+  const hh  = String(now.getHours()).padStart(2,'0');
+  const mm  = String(now.getMinutes()).padStart(2,'0');
+  const t   = hh + ':' + mm;
+  const phH  = document.getElementById('seg-ph-hora');
+  const salH = document.getElementById('seg-sal-hora');
+  if (phH && !phH.value)  phH.value  = t;
+  if (salH && !salH.value) salH.value = t;
+  renderSeguimientoHoy();
+  renderHistorial14();
+}
+
 // ═══ NAVEGACIÓN PRINCIPAL ═══
 function switchMain(section) {
-  const secCalc  = document.getElementById('section-calc');
-  const secDieta = document.getElementById('section-dieta');
-  const btnCalc  = document.getElementById('main-nav-calc');
-  const btnDieta = document.getElementById('main-nav-dieta');
+  // Ocultar todas las secciones
+  ['calc','dieta','seguimiento'].forEach(s => {
+    const el = document.getElementById('section-' + s);
+    if (el) el.style.display = 'none';
+  });
+  // Mostrar la activa
+  const active = document.getElementById('section-' + section);
+  if (active) active.style.display = 'block';
 
-  if (secCalc)  secCalc.style.display  = section === 'calc'  ? 'block' : 'none';
-  if (secDieta) secDieta.style.display = section === 'dieta' ? 'block' : 'none';
-  if (btnCalc) {
-    btnCalc.style.color      = section === 'calc'  ? '#d4820a' : '#a07040';
-    btnCalc.style.fontWeight = section === 'calc'  ? '500' : '400';
-  }
-  if (btnDieta) {
-    btnDieta.style.color      = section === 'dieta' ? '#2e7d32' : '#a07040';
-    btnDieta.style.fontWeight = section === 'dieta' ? '500' : '400';
-  }
-  if (section === 'dieta') initDieta();
+  // Actualizar botones nav
+  const colors = { calc: '#d4820a', dieta: '#2e7d32', seguimiento: '#1a7ab8' };
+  ['calc','dieta','seguimiento'].forEach(s => {
+    const btn = document.getElementById('main-nav-' + s);
+    if (btn) {
+      btn.style.color      = section === s ? colors[s] : '#a07040';
+      btn.style.fontWeight = section === s ? '500' : '400';
+    }
+  });
+
+  // Inicializar según sección
+  if (section === 'dieta')       initDieta();
+  if (section === 'seguimiento') initSeguimiento();
 }
 </script>
 
@@ -1724,6 +2151,50 @@ if ('serviceWorker' in navigator) {
       .catch(e => console.log('SW error:', e));
   });
 }
+// ═══ BACKUP JS ═══
+function exportarDatos() {
+  const datos = {};
+  for (let i = 0; i < localStorage.length; i++) {
+    const k = localStorage.key(i);
+    datos[k] = localStorage.getItem(k);
+  }
+  const json     = JSON.stringify(datos, null, 2);
+  const blob     = new Blob([json], { type: 'application/json' });
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  const fecha    = new Date().toISOString().slice(0,10);
+  a.href         = url;
+  a.download     = 'unani-backup-' + fecha + '.json';
+  a.click();
+  URL.revokeObjectURL(url);
+  const msg = document.getElementById('backup-msg');
+  if (msg) msg.textContent = '✓ Exportado correctamente';
+}
+
+function importarDatos(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const datos = JSON.parse(e.target.result);
+      let count = 0;
+      Object.keys(datos).forEach(k => {
+        localStorage.setItem(k, datos[k]);
+        count++;
+      });
+      const msg = document.getElementById('backup-msg');
+      if (msg) msg.textContent = '✓ ' + count + ' registros importados — recarga la app';
+      // Reinicializar
+      initSeguimiento();
+      renderHistorial14();
+    } catch(err) {
+      alert('Error al importar: fichero no válido');
+    }
+  };
+  reader.readAsText(file);
+}
+
 </script>
 </body>
 </html>
