@@ -1,4 +1,4 @@
-const CACHE_NAME = 'unani-sal-dieta-v2';
+const CACHE_NAME = 'unani-sal-dieta-v3';
 const ASSETS = [
   '/Paso-a-paso-Unani/',
   '/Paso-a-paso-Unani/index.html',

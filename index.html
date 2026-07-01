@@ -915,11 +915,11 @@ html, body {
         pointer-events:none;
         z-index:1;
       "></div>
-      <input type="range" id="calc-slider" min="0" max="15" step="0.25" value="4.0"
+      <input type="range" id="calc-slider" min="0" max="20" step="0.25" value="4.0"
         oninput="calcUpdate()"
         style="-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:2px;outline:none;margin:0;cursor:pointer;background:var(--surface2)">
     </div>
-    <div class="prop-markers"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span></div>
+    <div class="prop-markers"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span></div>
 
 
 
@@ -939,6 +939,29 @@ html, body {
     <div class="card-title">Sal por bebida — proporción actual</div>
     <div id="calc-results">
       <div class="empty">Añade tus bebidas habituales abajo ↓</div>
+    </div>
+  </div>
+
+  <!-- CALCULADORA CONTENEDOR -->
+  <div class="card" style="border-color:rgba(26,122,184,0.25);border-width:1px">
+    <div class="card-title" style="color:#1a7ab8">Calculadora de contenedor</div>
+    <div style="font-size:11px;color:var(--text3);margin-bottom:12px;line-height:1.6">
+      ¿Cuánta sal necesitas para preparar un contenedor a una proporción dada?
+    </div>
+    <div class="input-row" style="margin-bottom:10px">
+      <div class="input-group">
+        <label class="input-label">Volumen (ml)</label>
+        <input class="field" type="number" id="cont-ml" placeholder="400" min="1" step="1"
+          oninput="calcContenedor()" style="font-size:18px">
+      </div>
+      <div class="input-group">
+        <label class="input-label">Proporción (g/L)</label>
+        <input class="field" type="number" id="cont-prop" placeholder="50" min="0" max="300" step="0.5"
+          oninput="calcContenedor()" style="font-size:18px">
+      </div>
+    </div>
+    <div id="cont-result" style="text-align:center;padding:14px 0;min-height:60px">
+      <span style="font-size:12px;color:var(--text3)">Introduce volumen y proporción</span>
     </div>
   </div>
 
@@ -1299,10 +1322,7 @@ html, body {
 
   <!-- ═══ SEGUIMIENTO ═══ -->
 
-    <div class="section-title">Seguimiento</div>
-    <div class="section-desc">Registra pH, proporción de sal y puntuación diaria. Histórico de los últimos 14 días.</div>
-
-    <!-- Puntuación del día -->
+  
     <div class="seg-metric-card">
       <div class="seg-metric-title">
         <span>Puntuación Dieta</span>
@@ -1335,7 +1355,7 @@ html, body {
       <div class="seg-lecturas" id="seg-sal-lista"></div>
       <div class="seg-add-row">
         <input class="field-sm" type="time" id="seg-sal-hora">
-        <input class="field-sm" type="number" id="seg-sal-val" placeholder="8,50" min="0" max="15" step="0.25" style="font-size:18px">
+        <input class="field-sm" type="number" id="seg-sal-val" placeholder="8,50" min="0" max="20" step="0.25" style="font-size:18px">
         <button class="btn-seg" onclick="addLectura('sal')">+ g/L</button>
       </div>
     </div>
@@ -1396,19 +1416,19 @@ function esp(n, dec=2) { return n.toFixed(dec).replace('.', ','); }
 function mlPorGramo(conc) { return conc > 0 ? 1000 / conc : 0; }
 
 function faseInfo(p) {
-  if (p < 3)   return { txt: 'Planta baja',    col: 'var(--red)',    desc: 'Enfermedad activa' };
-  if (p < 5)   return { txt: 'Escalones',       col: 'var(--amber)', desc: 'Subida gradual' };
-  if (p < 7)   return { txt: 'Meseta',          col: 'var(--orange)',desc: 'Estabilización inicial' };
-  if (p < 9)   return { txt: 'Avance',          col: '#b87a00',      desc: 'Seguir subiendo' };
-  if (p < 15)  return { txt: 'Detox activo',    col: '#c8a0f5',      desc: 'Hasta resolver síntomas' };
-  if (p === 12) return { txt: 'Mantenimiento ✓',col: 'var(--green)', desc: 'Sostener aquí' };
-  return               { txt: 'Rango ideal ✓',  col: 'var(--green)', desc: '7–15 g/L de nacimiento' };
+  if (p < 3)   return { txt: 'Planta baja',     col: 'var(--red)',    desc: 'Enfermedad activa' };
+  if (p < 5)   return { txt: 'Escalones',        col: 'var(--amber)', desc: 'Subida gradual' };
+  if (p < 7)   return { txt: 'Meseta',           col: 'var(--orange)',desc: 'Estabilización inicial' };
+  if (p < 9)   return { txt: 'Avance',           col: '#b87a00',      desc: 'Seguir subiendo' };
+  if (p < 12)  return { txt: 'Detox activo',     col: '#c8a0f5',      desc: 'Hasta resolver síntomas' };
+  if (p <= 15) return { txt: 'Mantenimiento ✓',  col: 'var(--green)', desc: 'Sostener aquí' };
+  return               { txt: 'Suero concentrado', col: '#1a7ab8',    desc: 'Preparación de suero' };
 }
 
 // ── PROPORCIÓN ──
 function updateSliderTrack(slider) {
   const val = parseFloat(slider.value);
-  const pct = (val / 15) * 100;
+  const pct = (val / 20) * 100;
   // Usar CSS directamente en el input — más fiable que el div en Safari
   slider.style.background =
     `linear-gradient(90deg, var(--orange) ${pct}%, var(--border) ${pct}%)`;
@@ -1426,7 +1446,7 @@ function calcUpdate() {
 
   document.getElementById('calc-prop-val').textContent = esp(prop);
 
-  const next = Math.min(prop + 0.5, 15);
+  const next = Math.min(prop + 0.5, 20);
   renderCalcResults(prop, next);
   sueroUpdate(); // refrescar ejemplo con nueva proporción
 }
@@ -1434,7 +1454,7 @@ function calcUpdate() {
 
 function cambiarProp(delta) {
   let v = Math.round((parseFloat(document.getElementById('calc-slider').value) + delta) * 4) / 4;
-  v = Math.max(0, Math.min(15, v));
+  v = Math.max(0, Math.min(20, v));
   document.getElementById('calc-slider').value = v;
   calcUpdate();
 }
@@ -1604,7 +1624,7 @@ function deleteBebida(i) {
 function refreshResults() {
   const prop    = getCalcProp();
   const semanas = parseInt(document.getElementById('calc-semanas')?.value) || 1;
-  const next    = Math.min(prop + 0.5 * semanas, 15);
+  const next    = Math.min(prop + 0.5 * semanas, 20);
   renderCalcResults(prop, next);
 }
 
@@ -1644,6 +1664,38 @@ function calcInverso() {
     </div>
     <div style="font-size:11px;color:${fi.col}">${fi.txt}</div>
     <div style="font-size:10px;color:var(--text3);margin-top:3px">${sal}g sal · suero ${conc} g/L</div>
+  `;
+}
+
+
+function calcContenedor() {
+  const ml   = parseFloat(document.getElementById('cont-ml').value);
+  const prop = parseFloat(document.getElementById('cont-prop').value);
+  const el   = document.getElementById('cont-result');
+  if (!ml || !prop || ml <= 0 || prop <= 0) {
+    el.innerHTML = '<span style="font-size:12px;color:var(--text3)">Introduce volumen y proporción</span>';
+    return;
+  }
+  const gramos   = (prop * ml) / 1000;
+  const sueroConc = getSueroConc();
+  const mlSuero  = (gramos / sueroConc) * 1000;
+  const mlAgua   = ml - mlSuero;
+
+  el.innerHTML = `
+    <div style="margin-bottom:10px">
+      <div style="font-size:40px;font-weight:500;color:#1a7ab8;line-height:1">${esp(gramos)} g</div>
+      <div style="font-size:12px;color:var(--text3);margin-top:4px">de sal para ${ml} ml a ${esp(prop,1)} g/L</div>
+    </div>
+    <div style="background:var(--bg2);border-radius:var(--radius-sm);padding:12px;font-size:12px;color:var(--text2);line-height:2">
+      <div style="display:flex;justify-content:space-between">
+        <span style="color:var(--text3)">Con suero (${sueroConc} g/L)</span>
+        <span style="color:#1a7ab8;font-weight:500">${Math.round(mlSuero)} ml suero</span>
+      </div>
+      <div style="display:flex;justify-content:space-between">
+        <span style="color:var(--text3)">Agua a añadir</span>
+        <span style="font-weight:500">${mlAgua > 0 ? Math.round(mlAgua) + ' ml' : '—'}</span>
+      </div>
+    </div>
   `;
 }
 
